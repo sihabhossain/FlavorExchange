@@ -74,6 +74,6 @@ body {
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-gray-50 text-foreground; /* Set body background to gray */
   }
 }

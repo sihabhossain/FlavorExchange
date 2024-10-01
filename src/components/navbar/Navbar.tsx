@@ -3,10 +3,11 @@ import { Search, PlusCircle } from "lucide-react";
 import { Input } from "../ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
+import { UserDropdown } from "./DropDown";
 
 const Navbar = () => {
   return (
-    <nav className="flex items-center justify-between p-4 bg-white shadow-lg">
+    <nav className="flex items-center px-4 md:px-10 lg:px-20 justify-between p-4 bg-white shadow-md">
       <div className="flex items-center">
         <h1 className="text-2xl font-bold text-gray-800">FlavorXchange</h1>
       </div>
@@ -31,10 +32,10 @@ const Navbar = () => {
           <PlusCircle className="mr-1 h-5 w-5" />
           Create
         </Button>
-        <Avatar>
-          <AvatarImage src="https://github.com/shadcn.png" />
-          <AvatarFallback>CN</AvatarFallback>
-        </Avatar>
+
+        <div>
+          <UserDropdown />
+        </div>
       </div>
     </nav>
   );
