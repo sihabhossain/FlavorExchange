@@ -1,15 +1,17 @@
 import React from "react";
-import { Search, PlusCircle } from "lucide-react";
+import { Search } from "lucide-react";
 import { Input } from "../ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { Button } from "../ui/button";
 import { UserDropdown } from "./DropDown";
+import Link from "next/link";
 
 const Navbar = () => {
   return (
     <nav className="flex items-center px-4 md:px-10 lg:px-20 justify-between p-4 bg-white shadow-md">
       <div className="flex items-center">
-        <h1 className="text-2xl font-bold text-gray-800">FlavorXchange</h1>
+        <Link href={"/"} className="text-2xl font-bold text-gray-800">
+          FlavorXchange
+        </Link>
       </div>
       <div className="flex items-center justify-center flex-grow mx-4">
         <div className="relative w-full max-w-[300px] md:max-w-[500px]">
@@ -28,11 +30,6 @@ const Navbar = () => {
         </Avatar>
       </div>
       <div className="hidden md:flex items-center">
-        <Button className="flex items-center  text-white rounded-full px-4 py-2 mr-4 transition duration-200 ">
-          <PlusCircle className="mr-1 h-5 w-5" />
-          Create
-        </Button>
-
         <div>
           <UserDropdown />
         </div>

@@ -1,8 +1,15 @@
 import React from "react";
-import { Home, Compass, Mail, Settings } from "lucide-react";
+import {
+  LayoutDashboard,
+  Settings,
+  House,
+  PhoneCall,
+  Info,
+  Pizza,
+} from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { Button } from "../ui/button";
 import { CreateRecipeModal } from "../modals/CreateRecipeModal";
+import Link from "next/link";
 
 const Sidebar = () => {
   return (
@@ -22,18 +29,18 @@ const Sidebar = () => {
       {/* Navigation Section */}
       <nav className="flex bg-white py-4 rounded-lg shadow-md flex-col w-full px-6">
         {[
-          { icon: Home, label: "Home" },
-          { icon: Compass, label: "My Recipes" },
-
-          { icon: Mail, label: "Dashboard" },
-
-          { icon: Settings, label: "Settings" },
-        ].map(({ icon, label }, index) => (
-          <NavItem key={index} icon={icon} label={label} />
+          { icon: House, label: "Home", redirect: "/" },
+          { icon: Pizza, label: "My Recipes", redirect: "/myrecipes" },
+          { icon: LayoutDashboard, label: "Dashboard", redirect: "/dashboard" },
+          { icon: PhoneCall, label: "Contact", redirect: "/contact" },
+          { icon: Info, label: "About", redirect: "/about" },
+          { icon: Settings, label: "Settings", redirect: "/profile" },
+        ].map(({ icon, label, redirect }, index) => (
+          <NavItem key={index} icon={icon} label={label} redirect={redirect} />
         ))}
       </nav>
 
-      <div className="my-6 ">
+      <div className="my-6">
         <CreateRecipeModal />
       </div>
     </aside>
@@ -43,17 +50,21 @@ const Sidebar = () => {
 const NavItem = ({
   icon: Icon,
   label,
+  redirect,
 }: {
   icon: React.ComponentType;
   label: string;
+  redirect: string;
 }) => {
   return (
-    <div className="flex items-center mb-4 p-2 rounded-lg text-gray-800 hover:bg-gray-100 px-2 cursor-pointer hover:text-green-500">
-      <div className="mr-4">
-        <Icon />
+    <Link href={redirect} passHref>
+      <div className="flex items-center mb-4 p-2 rounded-lg text-gray-800 hover:bg-gray-100 px-2 cursor-pointer hover:text-green-500">
+        <div className="mr-4">
+          <Icon />
+        </div>
+        <span className="text-base">{label}</span>
       </div>
-      <span className="text-base">{label}</span>
-    </div>
+    </Link>
   );
 };
 
