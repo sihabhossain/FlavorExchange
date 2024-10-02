@@ -1,16 +1,8 @@
-// Sidebar.tsx
 import React from "react";
-import {
-  Home,
-  Compass,
-  Bell,
-  Mail,
-  Bookmark,
-  Monitor,
-  Settings,
-} from "lucide-react";
+import { Home, Compass, Mail, Settings } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
+import { CreateRecipeModal } from "../modals/CreateRecipeModal";
 
 const Sidebar = () => {
   return (
@@ -31,11 +23,10 @@ const Sidebar = () => {
       <nav className="flex bg-white py-4 rounded-lg shadow-md flex-col w-full px-6">
         {[
           { icon: Home, label: "Home" },
-          { icon: Compass, label: "Explore" },
-          { icon: Bell, label: "Notifications" },
-          { icon: Mail, label: "Messages" },
-          { icon: Bookmark, label: "Bookmarks" },
-          { icon: Monitor, label: "Theme" },
+          { icon: Compass, label: "My Recipes" },
+
+          { icon: Mail, label: "Dashboard" },
+
           { icon: Settings, label: "Settings" },
         ].map(({ icon, label }, index) => (
           <NavItem key={index} icon={icon} label={label} />
@@ -43,7 +34,7 @@ const Sidebar = () => {
       </nav>
 
       <div className="my-6 ">
-        <Button className="rounded-full w-[250px]">Create post</Button>
+        <CreateRecipeModal />
       </div>
     </aside>
   );
