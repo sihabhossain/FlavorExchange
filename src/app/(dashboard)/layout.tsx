@@ -16,7 +16,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
-  const role = "USER"; // Change this value dynamically based on your auth logic
+  const role = "ADMIN";
 
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const router = useRouter();
