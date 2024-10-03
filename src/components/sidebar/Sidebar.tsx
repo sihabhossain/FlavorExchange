@@ -34,7 +34,6 @@ const Sidebar = () => {
           { icon: LayoutDashboard, label: "Dashboard", redirect: "/dashboard" },
           { icon: PhoneCall, label: "Contact", redirect: "/contact" },
           { icon: Info, label: "About", redirect: "/about" },
-          { icon: Settings, label: "Settings", redirect: "/profile" },
         ].map(({ icon, label, redirect }, index) => (
           <NavItem key={index} icon={icon} label={label} redirect={redirect} />
         ))}

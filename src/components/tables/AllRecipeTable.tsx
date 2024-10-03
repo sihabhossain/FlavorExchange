@@ -67,7 +67,7 @@ const recipes = [
   // You can continue adding more recipes
 ];
 
-export function MyRecipeTable() {
+export function AllRecipeTable() {
   const handleUpdate = (id: string) => {
     console.log(`Update recipe with id: ${id}`);
   };
@@ -132,6 +132,18 @@ export function MyRecipeTable() {
                   >
                     Update
                   </button>
+                  <button
+                    onClick={() => handlePublish(recipe._id)}
+                    className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-500"
+                  >
+                    Publish
+                  </button>
+                  <button
+                    onClick={() => handleUnpublish(recipe._id)}
+                    className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-500"
+                  >
+                    Unpublish
+                  </button>
                 </TableCell>
               </TableRow>
             ))}
@@ -181,6 +193,18 @@ export function MyRecipeTable() {
                 className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-500"
               >
                 Update
+              </button>
+              <button
+                onClick={() => handlePublish(recipe._id)}
+                className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-500"
+              >
+                Publish
+              </button>
+              <button
+                onClick={() => handleUnpublish(recipe._id)}
+                className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-500"
+              >
+                Unpublish
               </button>
             </div>
           </div>

@@ -35,11 +35,11 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className="container mx-auto px-6 ">
+    <div className="container mx-auto px-6 bg-gray-900 text-white">
       {/* Profile Section */}
-      <section className="bg-green-50 rounded-lg p-6 shadow-lg border border-green-200">
+      <section className="rounded-lg p-6 shadow-lg border border-gray-700 bg-gray-800">
         <motion.h2
-          className="mb-4 text-2xl font-bold text-green-800"
+          className="mb-4 text-2xl font-bold text-green-400"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -50,32 +50,34 @@ const ProfilePage = () => {
           <img
             src={userInfo.profilePicture}
             alt="Profile"
-            className="mr-4 h-24 w-24 rounded-full border-4 border-green-200"
+            className="mr-4 h-24 w-24 rounded-full border-4 border-green-600"
           />
           <form onSubmit={handleProfileUpdate} className="flex-1">
             <div className="mb-2">
-              <label className="block text-green-700">Name:</label>
+              <label className="block text-green-300">Name:</label>
               <Input
                 type="text"
                 value={userInfo.name}
                 onChange={(e) =>
                   setUserInfo({ ...userInfo, name: e.target.value })
                 }
-                className="focus:outline-none" // Removed focus ring
+                className="focus:outline-none bg-gray-700 text-white placeholder-gray-400"
+                placeholder="Enter your name"
               />
             </div>
             <div className="mb-2">
-              <label className="block text-green-700">Bio:</label>
+              <label className="block text-green-300">Bio:</label>
               <Textarea
                 value={userInfo.bio}
                 onChange={(e) =>
                   setUserInfo({ ...userInfo, bio: e.target.value })
                 }
-                className="focus:outline-none" // Removed focus ring
+                className="focus:outline-none bg-gray-700 text-white placeholder-gray-400"
+                placeholder="Tell us about yourself"
               />
             </div>
             <div className="mb-2">
-              <label className="block text-green-700">Profile Link:</label>
+              <label className="block text-green-300">Profile Link:</label>
               <Input
                 type="url"
                 value={userInfo.profileLink}
@@ -83,7 +85,7 @@ const ProfilePage = () => {
                   setUserInfo({ ...userInfo, profileLink: e.target.value })
                 }
                 placeholder="https://example.com"
-                className="focus:outline-none" // Removed focus ring
+                className="focus:outline-none bg-gray-700 text-white placeholder-gray-400"
               />
             </div>
             <Button
@@ -97,9 +99,9 @@ const ProfilePage = () => {
       </section>
 
       {/* Social Connectivity */}
-      <section className="mt-8 bg-green-50 rounded-lg p-6 shadow-lg border border-green-200">
+      <section className="mt-8 rounded-lg p-6 shadow-lg border border-green-700 bg-gray-800">
         <motion.h2
-          className="mb-4 text-2xl font-bold text-green-800"
+          className="mb-4 text-2xl font-bold text-green-400"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -107,7 +109,7 @@ const ProfilePage = () => {
           Social Connectivity
         </motion.h2>
         <div className="flex items-center justify-between">
-          <div className="text-green-600">
+          <div className="text-green-300">
             <p>Followers: {followersCount}</p>
             <p>Following: {followingCount}</p>
           </div>
@@ -121,9 +123,9 @@ const ProfilePage = () => {
       </section>
 
       {/* Premium Membership Subscription */}
-      <section className="mt-8 bg-green-50 rounded-lg p-6 shadow-lg border border-green-200">
+      <section className="mt-8 rounded-lg p-6 shadow-lg border border-green-700 bg-gray-800">
         <motion.h2
-          className="mb-4 text-2xl font-bold text-green-800"
+          className="mb-4 text-2xl font-bold text-green-400"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -131,7 +133,7 @@ const ProfilePage = () => {
           Premium Membership
         </motion.h2>
         {isPremium ? (
-          <div className="flex items-center text-green-600">
+          <div className="flex items-center text-green-300">
             <CheckCircle className="mr-2 h-6 w-6 text-green-500" />
             <p>You are a premium member!</p>
           </div>
