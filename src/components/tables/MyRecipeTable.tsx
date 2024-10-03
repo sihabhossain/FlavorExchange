@@ -10,6 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { UpdateRecipeModal } from "../modals/UpdateRecipeModal";
 
 const recipes = [
   {
@@ -126,12 +127,7 @@ export function MyRecipeTable() {
                   {recipe.instructions}
                 </TableCell>
                 <TableCell className="flex space-x-2">
-                  <button
-                    onClick={() => handleUpdate(recipe._id)}
-                    className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-500"
-                  >
-                    Update
-                  </button>
+                  <UpdateRecipeModal />
                 </TableCell>
               </TableRow>
             ))}

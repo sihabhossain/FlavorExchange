@@ -68,13 +68,13 @@ const UserList = () => {
               {/* Added gap between buttons */}
               <Button
                 onClick={() => handleFollow(user.id)}
-                className="flex items-center justify-center text-white font-semibold py-2 px-4 rounded w-24 transition-all duration-200"
+                className="flex items-center justify-center text-white  py-2 px-4 rounded w-24 transition-all duration-200"
               >
                 Follow
               </Button>
               <Button
                 onClick={() => handleRemove(user.id)}
-                className="flex items-center justify-center bg-red-700 hover:bg-red-800  font-semibold py-2 px-4 rounded w-24 transition-all duration-200"
+                className="flex items-center justify-center bg-red-700 hover:bg-red-800   py-2 px-4 rounded w-24 transition-all duration-200"
               >
                 Remove
               </Button>
