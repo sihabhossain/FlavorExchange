@@ -1,5 +1,6 @@
 import Navbar from "@/components/navbar/Navbar";
 import Sidebar from "@/components/sidebar/Sidebar";
+import UserList from "@/components/userList/UserList";
 import { ReactNode } from "react";
 
 function MainLayout({ children }: { children: ReactNode }) {
@@ -11,8 +12,14 @@ function MainLayout({ children }: { children: ReactNode }) {
       </div>
       <div className="flex flex-col flex-grow">
         <Navbar />
-        {/* Adjust margin for small screens when the sidebar is hidden */}
-        <main className="p-4 mt-4 md:ml-72">{children}</main>
+        {/* Center the main content and set a max-width */}
+        <main className="mx-auto p-4 mt-4 flex-grow max-w-5xl w-full">
+          {children}
+        </main>
+      </div>
+      {/* User list section on the right side */}
+      <div className="hidden lg:block">
+        <UserList />
       </div>
     </div>
   );

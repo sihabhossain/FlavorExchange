@@ -30,7 +30,6 @@ const Sidebar = () => {
       <nav className="flex bg-white py-4 rounded-lg shadow-md flex-col w-full px-6">
         {[
           { icon: House, label: "Home", redirect: "/" },
-          { icon: Pizza, label: "My Recipes", redirect: "/myrecipes" },
           { icon: LayoutDashboard, label: "Dashboard", redirect: "/dashboard" },
           { icon: PhoneCall, label: "Contact", redirect: "/contact" },
           { icon: Info, label: "About", redirect: "/about" },
