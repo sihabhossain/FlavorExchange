@@ -29,14 +29,14 @@ const PostCard = () => {
         <div className="flex items-center px-6 py-4">
           <img
             className="w-12 h-12 object-cover rounded-full"
-            src="https://randomuser.me/api/portraits/men/32.jpg"
+            src="https://i.ibb.co.com/tpkfQ7d/Screenshot-9.png"
             alt="Profile"
           />
           <div className="ml-4">
-            <h2 className="text-lg font-semibold">Phillip Tønder</h2>
+            <h2 className="text-lg font-semibold">Mrinmoyee</h2>
             <p className="text-sm text-gray-500">
               is feeling happy with{" "}
-              <span className="text-blue-500">@johndoe</span>
+              <span className="text-blue-500">@sihab</span>
             </p>
           </div>
           <button className="ml-auto">
