@@ -14,9 +14,12 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useUser } from "@/contexts/user.provider";
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
-  const role = "ADMIN";
+  const { user } = useUser();
+
+  const role = user?.role;
 
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const router = useRouter();

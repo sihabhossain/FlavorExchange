@@ -6,9 +6,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useUserLogin, useUserRegistration } from "@/hooks/auth.hook";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation"; // useRouter for redirection
+import { useUser } from "@/contexts/user.provider";
 
 const AuthPage: React.FC = () => {
   const [isLogin, setIsLogin] = useState(true);
+  const [loading, setLoading] = useState(false); // Loading state
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -17,8 +20,12 @@ const AuthPage: React.FC = () => {
     profilePhoto: "",
   });
 
+  const router = useRouter(); // To handle redirection
+
+  const { setIsLoading: userLoading } = useUser();
+
   // mutations
-  const { mutate: resgisterUser, isPending: registerPending } =
+  const { mutate: registerUser, isPending: registerPending } =
     useUserRegistration();
   const { mutate: loginUser, isPending: loginPending } = useUserLogin();
 
@@ -34,13 +41,23 @@ const AuthPage: React.FC = () => {
     e.preventDefault();
     const { email, password } = formData;
 
-    // Perform simple validation (for example purposes)
     if (!email || !password) {
       alert("Please fill in all the fields.");
       return;
     }
 
-    loginUser(formData);
+    setLoading(true); // Set loading to true
+    userLoading(true);
+    loginUser(formData, {
+      onSuccess: () => {
+        setLoading(false); // Stop loading
+        router.push("/"); // Redirect to homepage
+      },
+      onError: () => {
+        setLoading(false); // Stop loading on error
+        toast("Login failed. Please try again.");
+      },
+    });
   };
 
   // Handle signup form submission
@@ -48,13 +65,23 @@ const AuthPage: React.FC = () => {
     e.preventDefault();
     const { name, email, password, mobileNumber, profilePhoto } = formData;
 
-    // Perform simple validation (for example purposes)
     if (!name || !email || !password || !mobileNumber || !profilePhoto) {
       toast("Please fill in all the fields.");
       return;
     }
 
-    resgisterUser(formData);
+    setLoading(true); // Set loading to true
+    userLoading(true);
+    registerUser(formData, {
+      onSuccess: () => {
+        setLoading(false); // Stop loading
+        router.push("/"); // Redirect to homepage
+      },
+      onError: () => {
+        setLoading(false); // Stop loading on error
+        toast("Registration failed. Please try again.");
+      },
+    });
   };
 
   return (
@@ -74,7 +101,7 @@ const AuthPage: React.FC = () => {
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="Email"
-                className="ml-3 w-full text-gray-700 focus:outline-green-500 "
+                className="ml-3 w-full text-gray-700 focus:outline-green-500"
               />
             </div>
 
@@ -86,15 +113,16 @@ const AuthPage: React.FC = () => {
                 value={formData.password}
                 onChange={handleChange}
                 placeholder="Password"
-                className="ml-3 w-full text-gray-700 focus:outline-green-500 "
+                className="ml-3 w-full text-gray-700 focus:outline-green-500"
               />
             </div>
 
             <Button
               type="submit"
               className="flex w-full items-center justify-center rounded-md py-3 text-white transition duration-300 focus:outline-none focus:ring-4 focus:ring-gray-300"
+              disabled={loading} // Disable button during loading
             >
-              Login
+              {loading ? "Logging in..." : "Login"} {/* Show loading text */}
             </Button>
           </form>
         ) : (
@@ -107,7 +135,7 @@ const AuthPage: React.FC = () => {
                 value={formData.name}
                 onChange={handleChange}
                 placeholder="Name"
-                className="ml-3 w-full text-gray-700 focus:outline-green-500 "
+                className="ml-3 w-full text-gray-700 focus:outline-green-500"
               />
             </div>
 
@@ -162,8 +190,9 @@ const AuthPage: React.FC = () => {
             <Button
               type="submit"
               className="flex w-full items-center justify-center rounded-md py-3 font-semibold text-white transition duration-300 focus:outline-green-500"
+              disabled={loading} // Disable button during loading
             >
-              Sign Up
+              {loading ? "Signing up..." : "Sign Up"} {/* Show loading text */}
             </Button>
           </form>
         )}

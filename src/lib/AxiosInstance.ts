@@ -1,6 +1,7 @@
+import envConfig from "@/config/envConfig";
+import { getNewAccessToken } from "@/services/auth";
 import axios from "axios";
 import { cookies } from "next/headers";
-import envConfig from "@/config/envConfig";
 
 const axiosInstance = axios.create({
   baseURL: envConfig.baseApi,
@@ -28,6 +29,19 @@ axiosInstance.interceptors.response.use(
   },
   async function (error) {
     const config = error.config;
+
+    if (error?.response?.status === 401 && !config?.sent) {
+      config.sent = true;
+      const res = await getNewAccessToken();
+      const accessToken = res.data.accessToken;
+
+      config.headers["Authorization"] = accessToken;
+      cookies().set("accessToken", accessToken);
+
+      return axiosInstance(config);
+    } else {
+      return Promise.reject(error);
+    }
   }
 );
 

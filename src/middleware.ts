@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { NextRequest } from "next/server";
+import { getCurrentUser } from "./services/auth";
 
 const AuthRoutes = ["/login"];
 
@@ -15,14 +16,7 @@ const roleBasedRoutes = {
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Simulated user object (replace this with actual auth logic, e.g., token validation)
-  // const user = {
-  //   name: "Sihab",
-  //   role: "USER", // User's role, e.g., USER or ADMIN
-  // };
-
-  // Uncomment this line to simulate user not existing (unauthenticated)
-  const user = null;
+  const user = await getCurrentUser();
 
   // If user is not authenticated and is trying to access a protected route
   if (!user) {
