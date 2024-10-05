@@ -12,8 +12,9 @@ axiosInstance.interceptors.request.use(
     const cookieStore = cookies();
     const accessToken = cookieStore.get("accessToken")?.value;
 
+    // Set accessToken from cookies in the headers if it exists
     if (accessToken) {
-      config.headers.Authorization = accessToken;
+      config.headers.Authorization = `Bearer ${accessToken}`;
     }
 
     return config;
@@ -32,13 +33,24 @@ axiosInstance.interceptors.response.use(
 
     if (error?.response?.status === 401 && !config?.sent) {
       config.sent = true;
-      const res = await getNewAccessToken();
-      const accessToken = res.data.accessToken;
 
-      config.headers["Authorization"] = accessToken;
-      cookies().set("accessToken", accessToken);
+      try {
+        // Get a new access token
+        const res = await getNewAccessToken();
+        const newAccessToken = res.data.accessToken;
 
-      return axiosInstance(config);
+        // Update the authorization header with the new token
+        config.headers["Authorization"] = `Bearer ${newAccessToken}`;
+
+        // Set the new access token in cookies
+        const cookieStore = cookies();
+        cookieStore.set("accessToken", newAccessToken, { path: "/" });
+
+        // Retry the original request with the new token
+        return axiosInstance(config);
+      } catch (error) {
+        return Promise.reject(error);
+      }
     } else {
       return Promise.reject(error);
     }

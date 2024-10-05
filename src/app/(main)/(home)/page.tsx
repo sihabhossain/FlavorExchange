@@ -46,9 +46,9 @@ const Home = () => {
 
   return (
     <div>
-      {posts.map((post) => (
+      {/* {posts.map((post) => (
         <PostCard key={post.id} />
-      ))}
+      ))} */}
       {loading && <p className="text-center py-4">Loading more posts...</p>}
       {!hasMore && <p className="text-center py-4">No more posts to load.</p>}
     </div>

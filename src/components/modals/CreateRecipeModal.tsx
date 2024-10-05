@@ -14,32 +14,41 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import dynamic from "next/dynamic";
 import "react-quill/dist/quill.snow.css";
+import { useCreateRecipePost } from "@/hooks/post.hook";
+import { useUser } from "@/contexts/user.provider";
+import { Loader2 } from "lucide-react"; // Import a loading icon
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 export function CreateRecipeModal() {
   const [title, setTitle] = useState("");
-  const [ingredients, setIngredients] = useState<
-    { name: string; checked: boolean }[]
-  >([]);
+  const [ingredients, setIngredients] = useState<string[]>([]);
   const [instructions, setInstructions] = useState("");
   const [image, setImage] = useState("");
   const [newIngredient, setNewIngredient] = useState("");
+  const [isOpen, setIsOpen] = useState(false); // Modal open state
+
+  // retrieve user _id
+  const { user } = useUser();
+
+  // create a recipe
+  const { mutate: createRecipe, isPending, isSuccess } = useCreateRecipePost();
+
+  // Close modal when mutation is successful
+  if (isSuccess && isOpen) {
+    setIsOpen(false);
+  }
 
   const handleAddIngredient = () => {
     if (newIngredient.trim()) {
-      setIngredients([...ingredients, { name: newIngredient, checked: false }]);
+      setIngredients([...ingredients, newIngredient.trim()]);
       setNewIngredient("");
     }
   };
 
-  const toggleIngredientChecked = (index: number) => {
+  const handleRemoveIngredient = (index: number) => {
     setIngredients((prevIngredients) =>
-      prevIngredients.map((ingredient, i) =>
-        i === index
-          ? { ...ingredient, checked: !ingredient.checked }
-          : ingredient
-      )
+      prevIngredients.filter((_, i) => i !== index)
     );
   };
 
@@ -49,15 +58,21 @@ export function CreateRecipeModal() {
       ingredients,
       instructions,
       image,
-      userId: "642fa8c28c1a4e5d12345678",
+      userId: user?._id,
     };
-    // Submit recipeData to your API
+
+    createRecipe(recipeData);
   };
 
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button className="rounded-full w-[250px]">Create Recipe</Button>
+        <Button
+          className="rounded-full w-[250px]"
+          onClick={() => setIsOpen(true)}
+        >
+          Create Recipe
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[600px] p-6 rounded-lg shadow-lg">
         <DialogHeader>
@@ -80,7 +95,7 @@ export function CreateRecipeModal() {
             />
           </div>
 
-          {/* Ingredients Checklist */}
+          {/* Ingredients */}
           <div>
             <h3 className="text-lg font-semibold mb-2">Ingredients</h3>
             {ingredients.map((ingredient, index) => (
@@ -88,17 +103,13 @@ export function CreateRecipeModal() {
                 key={index}
                 className="flex items-center justify-between p-2 bg-gray-100 rounded-md mb-2"
               >
-                <label className="flex items-center space-x-3">
-                  <input
-                    type="checkbox"
-                    checked={ingredient.checked}
-                    onChange={() => toggleIngredientChecked(index)}
-                    className="form-checkbox"
-                  />
-                  <span className={ingredient.checked ? "line-through" : ""}>
-                    {ingredient.name}
-                  </span>
-                </label>
+                <span>{ingredient}</span>
+                <Button
+                  onClick={() => handleRemoveIngredient(index)}
+                  className="ml-2 text-red-500"
+                >
+                  Remove
+                </Button>
               </div>
             ))}
             <div className="flex mt-2 space-x-3">
@@ -146,8 +157,15 @@ export function CreateRecipeModal() {
             type="button"
             onClick={handleSubmit}
             className="px-8 py-3 rounded-md flex items-center text-white "
+            disabled={isPending} // Disable button during loading
           >
-            Create Recipe
+            {isPending ? (
+              <div>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Creating...
+              </div>
+            ) : (
+              "Create Recipe"
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>

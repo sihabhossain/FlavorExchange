@@ -18,3 +18,11 @@ export interface IUser {
   updatedAt?: string;
   __v?: number;
 }
+
+export interface IRecipe {
+  title: string;
+  ingredients: string[];
+  instructions: string;
+  image: string;
+  userId: string | undefined;
+}
