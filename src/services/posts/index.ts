@@ -25,3 +25,12 @@ export const GetAllPosts = async () => {
     throw new Error(err);
   }
 };
+
+export const GetSinglePost = async (id: string) => {
+  try {
+    const { data } = await axiosInstance.get(`/recipe/${id}`);
+    return data;
+  } catch (err: any) {
+    throw new Error(err);
+  }
+};

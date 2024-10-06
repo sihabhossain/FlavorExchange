@@ -5,28 +5,23 @@ import { ThumbsUp, ThumbsDown, MessageCircle } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useGetSinglePost } from "@/hooks/post.hook";
 
 const PostDetails = () => {
   const router = useRouter();
-
   const { id } = useParams();
+  const postId = Array.isArray(id) ? id[0] : id; // Ensure id is a string
 
-  console.log(id);
+  // Use the custom hook to fetch post data
+  const { data, isLoading, error } = useGetSinglePost(postId);
 
+  const post = data?.data;
+
+  // Local state for comments and votes
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState([]);
   const [upvotes, setUpvotes] = useState(0);
   const [downvotes, setDownvotes] = useState(0);
-
-  // Sample data (you would replace this with actual data from an API)
-  const post = {
-    author: "Phillip Tønder",
-    content: "is feeling happy with @johndoe",
-    description:
-      "This is the description of the post. It provides additional context and information about the content shared in the post.",
-    imageUrl: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd",
-    createdAt: "1 day ago",
-  };
 
   const handleCommentSubmit = (e) => {
     e.preventDefault();
@@ -36,19 +31,22 @@ const PostDetails = () => {
     }
   };
 
+  // Loading and error states
+  if (isLoading) return <p>Loading...</p>;
+  if (error) return <p>Error fetching post details.</p>;
+
   return (
     <div className="max-w-xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden mt-4">
       {/* Header */}
-
       <div className="flex items-center px-6 py-4">
         <img
           className="w-12 h-12 object-cover rounded-full"
-          src="https://randomuser.me/api/portraits/men/32.jpg"
+          src={post.userId.profilePhoto} // Use author's image if available
           alt="Profile"
         />
         <div className="ml-4">
-          <h2 className="text-lg font-semibold">{post.author}</h2>
-          <p className="text-sm text-gray-500">{post.content}</p>
+          <h2 className="text-lg font-semibold">{post.userId.name}</h2>
+          <p className="text-sm text-gray-500">{post.title}</p>
         </div>
       </div>
 
@@ -58,11 +56,33 @@ const PostDetails = () => {
       </div>
 
       {/* Image */}
-      <img
-        className="w-full h-80 object-cover"
-        src={post.imageUrl}
-        alt="Post content"
-      />
+      {post.image && (
+        <img
+          className="w-full h-80 object-cover"
+          src={post.image}
+          alt="Post content"
+        />
+      )}
+
+      {/* Ingredients Section */}
+      {post.ingredients && post.ingredients.length > 0 && (
+        <div className="px-6 py-4">
+          <h3 className="text-lg font-semibold">Ingredients:</h3>
+          <ul className="list-disc list-inside text-gray-700">
+            {post.ingredients.map((ingredient, index) => (
+              <li key={index}>{ingredient}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {/* Instructions Section */}
+      {post.instructions && (
+        <div className="px-6 py-4">
+          <h3 className="text-lg font-semibold">Instructions:</h3>
+          <p className="text-gray-700">{post.instructions}</p>
+        </div>
+      )}
 
       {/* Footer */}
       <div className="px-6 py-4">
@@ -88,7 +108,9 @@ const PostDetails = () => {
             </button>
           </div>
           <div className="text-gray-500">
-            <p className="text-sm">{post.createdAt}</p>
+            <p className="text-sm">
+              {new Date(post.createdAt).toLocaleString()}
+            </p>
           </div>
         </div>
       </div>

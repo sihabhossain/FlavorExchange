@@ -1,4 +1,4 @@
-import { CreateRecipePost, GetAllPosts } from "@/services/posts";
+import { CreateRecipePost, GetAllPosts, GetSinglePost } from "@/services/posts";
 import { IRecipe } from "@/types";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -22,5 +22,12 @@ export const useGetAllPosts = () => {
   return useQuery({
     queryKey: ["GET_ALL_POSTS"],
     queryFn: () => GetAllPosts(),
+  });
+};
+
+export const useGetSinglePost = (id: string) => {
+  return useQuery({
+    queryKey: ["GET_SINGLE_POSTS"],
+    queryFn: () => GetSinglePost(id),
   });
 };
