@@ -8,8 +8,8 @@ import {
   useState,
 } from "react";
 
-import { IUser } from "../types";
 import { getCurrentUser } from "@/services/auth";
+import { IUser } from "@/types";
 
 const UserContext = createContext<IUserProviderValues | undefined>(undefined);
 

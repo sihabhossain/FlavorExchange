@@ -12,32 +12,36 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { SharePostModal } from "../modals/SharePost";
 import Link from "next/link";
+import { PostCardProps } from "@/types";
 
-const PostCard = () => {
+const PostCard: React.FC<{ post: PostCardProps }> = ({ post }) => {
   const [showComments, setShowComments] = useState(false);
   const [comment, setComment] = useState("");
-  const [comments, setComments] = useState([]);
-  const [upvotes, setUpvotes] = useState(0);
-  const [downvotes, setDownvotes] = useState(0);
+  const [comments, setComments] = useState<string[]>([]);
+  const [upvotes, setUpvotes] = useState(post.upvotes);
+  const [downvotes, setDownvotes] = useState(post.downvotes);
 
-  const handleCommentSubmit = () => {};
+  const handleCommentSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (comment.trim()) {
+      setComments((prev) => [...prev, comment]);
+      setComment(""); // Clear input field after submit
+    }
+  };
 
   return (
-    <Link href={`/post/${1}`}>
+    <Link href={`/recipe/${post._id}`}>
       <div className="max-w-xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden mt-4">
         {/* Header */}
         <div className="flex items-center px-6 py-4">
           <img
             className="w-12 h-12 object-cover rounded-full"
-            src="https://i.ibb.co.com/tpkfQ7d/Screenshot-9.png"
+            src={post.userId.profilePhoto}
             alt="Profile"
           />
           <div className="ml-4">
-            <h2 className="text-lg font-semibold">Mrinmoyee</h2>
-            <p className="text-sm text-gray-500">
-              is feeling happy with{" "}
-              <span className="text-blue-500">@sihab</span>
-            </p>
+            <h2 className="text-lg font-semibold">{post.userId.name}</h2>
+            <p className="text-sm text-gray-500">{post.title}</p>
           </div>
           <button className="ml-auto">
             <MoreHorizontal className="w-6 h-6 text-gray-500" />
@@ -47,9 +51,25 @@ const PostCard = () => {
         {/* Image */}
         <img
           className="w-full h-80 object-cover"
-          src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd"
-          alt="Post content"
+          src={post.image}
+          alt="Recipe content"
         />
+
+        {/* Instructions */}
+        <div className="px-6 py-4">
+          <h3 className="text-md font-semibold">Instructions:</h3>
+          <p className="text-sm text-gray-700">{post.instructions}</p>
+        </div>
+
+        {/* Ingredients */}
+        <div className="px-6 py-4">
+          <h3 className="text-md font-semibold">Ingredients:</h3>
+          <ul className="list-disc list-inside text-sm text-gray-700">
+            {post.ingredients.map((ingredient, index) => (
+              <li key={index}>{ingredient}</li>
+            ))}
+          </ul>
+        </div>
 
         {/* Footer */}
         <div className="px-6 py-4">
@@ -71,7 +91,7 @@ const PostCard = () => {
                 className="flex items-center text-gray-500 hover:text-blue-500"
                 onClick={() => setShowComments(!showComments)}
               >
-                <MessageCircle className="w-6 h-6 mr-2" /> 45
+                <MessageCircle className="w-6 h-6 mr-2" /> {comments.length}
               </button>
               <SharePostModal />
             </div>

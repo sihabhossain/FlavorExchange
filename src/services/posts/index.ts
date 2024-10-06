@@ -13,7 +13,15 @@ export const CreateRecipePost = async (postData: IRecipe) => {
 
     return data;
   } catch (err: any) {
-    console.log(err);
+    throw new Error(err);
+  }
+};
+
+export const GetAllPosts = async () => {
+  try {
+    const { data } = await axiosInstance.get("/recipe");
+    return data;
+  } catch (err: any) {
     throw new Error(err);
   }
 };

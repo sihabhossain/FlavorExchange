@@ -1,6 +1,6 @@
-import { CreateRecipePost } from "@/services/posts";
+import { CreateRecipePost, GetAllPosts } from "@/services/posts";
 import { IRecipe } from "@/types";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 export const useCreateRecipePost = () => {
@@ -15,5 +15,12 @@ export const useCreateRecipePost = () => {
       console.log(error);
       toast.error(error.message);
     },
+  });
+};
+
+export const useGetAllPosts = () => {
+  return useQuery({
+    queryKey: ["GET_ALL_POSTS"],
+    queryFn: () => GetAllPosts(),
   });
 };

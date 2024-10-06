@@ -2,12 +2,16 @@
 
 import React, { useState } from "react";
 import { ThumbsUp, ThumbsDown, MessageCircle } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 const PostDetails = () => {
   const router = useRouter();
+
+  const { id } = useParams();
+
+  console.log(id);
 
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState([]);
