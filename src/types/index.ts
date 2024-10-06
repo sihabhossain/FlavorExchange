@@ -47,3 +47,8 @@ export interface PostCardProps {
   createdAt: string;
   __v: number;
 }
+
+export interface IComment {
+  userId: string | undefined;
+  comment: string;
+}

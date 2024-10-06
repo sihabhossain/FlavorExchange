@@ -12,25 +12,66 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { SharePostModal } from "../modals/SharePost";
 import { PostCardProps } from "@/types";
+import { toast } from "sonner";
+import { useUser } from "@/contexts/user.provider";
+import { UseDownVotePost, useUpvotePost } from "@/hooks/voting.hook";
+import { usePostComment } from "@/hooks/comment.hook";
 
 const PostCard: React.FC<{ post: PostCardProps }> = ({ post }) => {
   const [showComments, setShowComments] = useState(false);
   const [comment, setComment] = useState("");
-  const [comments, setComments] = useState<string[]>([]);
+  const [comments, setComments] = useState(post.comments);
   const [upvotes, setUpvotes] = useState(post.upvotes);
   const [downvotes, setDownvotes] = useState(post.downvotes);
-  const router = useRouter(); // Initialize the router
+  const router = useRouter();
+
+  const { user } = useUser();
+
+  // Hooks for upvoting and downvoting posts
+  const { mutate: upvoteMutate } = useUpvotePost(post._id);
+  const { mutate: downvoteMutate } = UseDownVotePost(post._id);
+  const { mutate: postCommentMutate } = usePostComment();
 
   const handleCommentSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (comment.trim()) {
-      setComments((prev) => [...prev, comment]);
+      const newComment = {
+        comment,
+        userId: user?._id,
+        profilePhoto: user?.profilePhoto, // Add profilePhoto here
+      };
+
+      // Update local state
+      setComments((prev) => [...prev, newComment]);
       setComment("");
+
+      // Post the comment to the server
+      postCommentMutate({ _id: post._id, postData: newComment });
     }
   };
 
   const handleUpgradeClick = () => {
-    router.push("/dashboard/profile"); // Redirect to the profile page
+    router.push("/dashboard/profile");
+  };
+
+  const handleSeeMoreClick = () => {
+    if (user?.isPremium) {
+      router.push(`/post/${post._id}`);
+    } else {
+      toast.error("Please upgrade to premium to see the full recipe details.");
+    }
+  };
+
+  // Handle upvote action
+  const handleUpvote = () => {
+    upvoteMutate();
+    setUpvotes((prev) => prev + 1);
+  };
+
+  // Handle downvote action
+  const handleDownvote = () => {
+    downvoteMutate();
+    setDownvotes((prev) => prev + 1);
   };
 
   return (
@@ -51,6 +92,20 @@ const PostCard: React.FC<{ post: PostCardProps }> = ({ post }) => {
         </button>
       </div>
 
+      {/* Show a preview of instructions */}
+      <div className="px-6 py-4">
+        <h3 className="text-md font-semibold">Instructions:</h3>
+        <p className="text-sm text-gray-700">
+          {post.instructions.slice(0, 50)}...{" "}
+          <span
+            onClick={handleSeeMoreClick}
+            className="text-blue-500 cursor-pointer"
+          >
+            See more
+          </span>
+        </p>
+      </div>
+
       {/* Image */}
       <img
         className="w-full h-80 object-cover"
@@ -58,25 +113,16 @@ const PostCard: React.FC<{ post: PostCardProps }> = ({ post }) => {
         alt="Recipe content"
       />
 
-      {/* Instructions and Ingredients (Only for Premium Users) */}
-      {post.userId.isPremium ? (
-        <>
-          {/* Instructions */}
-          <div className="px-6 py-4">
-            <h3 className="text-md font-semibold">Instructions:</h3>
-            <p className="text-sm text-gray-700">{post.instructions}</p>
-          </div>
-
-          {/* Ingredients */}
-          <div className="px-6 py-4">
-            <h3 className="text-md font-semibold">Ingredients:</h3>
-            <ul className="list-disc list-inside text-sm text-gray-700">
-              {post.ingredients.map((ingredient, index) => (
-                <li key={index}>{ingredient}</li>
-              ))}
-            </ul>
-          </div>
-        </>
+      {/* Ingredients */}
+      {user?.isPremium ? (
+        <div className="px-6 py-4">
+          <h3 className="text-md font-semibold">Ingredients:</h3>
+          <ul className="list-disc list-inside text-sm text-gray-700">
+            {post.ingredients.map((ingredient, index) => (
+              <li key={index}>{ingredient}</li>
+            ))}
+          </ul>
+        </div>
       ) : (
         <div className="px-6 py-4">
           <p className="text-md cursor-pointer text-red-500">
@@ -94,13 +140,13 @@ const PostCard: React.FC<{ post: PostCardProps }> = ({ post }) => {
           <div className="flex space-x-6">
             <button
               className="flex items-center text-gray-500 hover:text-green-500"
-              onClick={() => setUpvotes(upvotes + 1)}
+              onClick={handleUpvote}
             >
               <ThumbsUp className="w-6 h-6 mr-2" /> {upvotes}
             </button>
             <button
               className="flex items-center text-gray-500 hover:text-red-500"
-              onClick={() => setDownvotes(downvotes + 1)}
+              onClick={handleDownvote}
             >
               <ThumbsDown className="w-6 h-6 mr-2" /> {downvotes}
             </button>
@@ -124,7 +170,7 @@ const PostCard: React.FC<{ post: PostCardProps }> = ({ post }) => {
           <div className="flex space-x-4 mb-4">
             <img
               className="w-10 h-10 object-cover rounded-full"
-              src="https://randomuser.me/api/portraits/women/44.jpg"
+              src={user?.profilePhoto}
               alt="User"
             />
             <form className="flex-1 flex" onSubmit={handleCommentSubmit}>
@@ -147,14 +193,14 @@ const PostCard: React.FC<{ post: PostCardProps }> = ({ post }) => {
           {/* Render Comments */}
           {comments.length > 0 && (
             <div className="mt-2">
-              {comments.map((c, index) => (
-                <div key={index} className="flex items-center mb-2">
+              {comments.map((c) => (
+                <div key={c._id} className="flex items-center mb-2">
                   <img
                     className="w-8 h-8 object-cover rounded-full mr-2"
-                    src="https://randomuser.me/api/portraits/men/32.jpg"
+                    src={c.userId?.profilePhoto}
                     alt="Commenter"
                   />
-                  <p className="text-sm">{c}</p>
+                  <p className="text-sm">{c.comment}</p>
                 </div>
               ))}
             </div>

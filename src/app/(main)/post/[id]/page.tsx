@@ -2,13 +2,12 @@
 
 import React, { useState } from "react";
 import { ThumbsUp, ThumbsDown, MessageCircle } from "lucide-react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useGetSinglePost } from "@/hooks/post.hook";
 
 const PostDetails = () => {
-  const router = useRouter();
   const { id } = useParams();
   const postId = Array.isArray(id) ? id[0] : id; // Ensure id is a string
 
@@ -41,35 +40,35 @@ const PostDetails = () => {
       <div className="flex items-center px-6 py-4">
         <img
           className="w-12 h-12 object-cover rounded-full"
-          src={post.userId.profilePhoto} // Use author's image if available
+          src={post?.userId?.profilePhoto} // Use author's image if available
           alt="Profile"
         />
         <div className="ml-4">
-          <h2 className="text-lg font-semibold">{post.userId.name}</h2>
-          <p className="text-sm text-gray-500">{post.title}</p>
+          <h2 className="text-lg font-semibold">{post?.userId?.name}</h2>
+          <p className="text-sm text-gray-500">{post?.title}</p>
         </div>
       </div>
 
       {/* Description */}
       <div className="px-6 py-4">
-        <p className="text-gray-700">{post.description}</p>
+        <p className="text-gray-700">{post?.description}</p>
       </div>
 
       {/* Image */}
-      {post.image && (
+      {post?.image && (
         <img
           className="w-full h-80 object-cover"
-          src={post.image}
+          src={post?.image}
           alt="Post content"
         />
       )}
 
       {/* Ingredients Section */}
-      {post.ingredients && post.ingredients.length > 0 && (
+      {post?.ingredients && post?.ingredients.length > 0 && (
         <div className="px-6 py-4">
           <h3 className="text-lg font-semibold">Ingredients:</h3>
           <ul className="list-disc list-inside text-gray-700">
-            {post.ingredients.map((ingredient, index) => (
+            {post?.ingredients.map((ingredient, index) => (
               <li key={index}>{ingredient}</li>
             ))}
           </ul>
@@ -77,10 +76,10 @@ const PostDetails = () => {
       )}
 
       {/* Instructions Section */}
-      {post.instructions && (
+      {post?.instructions && (
         <div className="px-6 py-4">
           <h3 className="text-lg font-semibold">Instructions:</h3>
-          <p className="text-gray-700">{post.instructions}</p>
+          <p className="text-gray-700">{post?.instructions}</p>
         </div>
       )}
 
@@ -109,7 +108,7 @@ const PostDetails = () => {
           </div>
           <div className="text-gray-500">
             <p className="text-sm">
-              {new Date(post.createdAt).toLocaleString()}
+              {post?.createdAt && new Date(post.createdAt).toLocaleString()}
             </p>
           </div>
         </div>
