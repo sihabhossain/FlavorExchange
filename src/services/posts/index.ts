@@ -31,6 +31,20 @@ export const UpdateRecipe = async (_id: string, updatedData: TUpdateRecipe) => {
   }
 };
 
+export const DeleteRecipe = async (_id: string) => {
+  try {
+    const { data } = await axiosInstance.delete(`/recipe/${_id}`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    return data;
+  } catch (err: any) {
+    throw new Error(err);
+  }
+};
+
 export const GetAllPosts = async () => {
   try {
     const { data } = await axiosInstance.get("/recipe");

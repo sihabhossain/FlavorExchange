@@ -6,19 +6,10 @@ import { Upload, User, CheckCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { useUser } from "@/contexts/user.provider";
 
 const ProfilePage = () => {
-  const [userInfo, setUserInfo] = useState({
-    name: "John Doe",
-    bio: "Food enthusiast sharing recipes and cooking tips!",
-    profilePicture:
-      "https://img.freepik.com/free-photo/portrait-young-man_23-2147866051.jpg?t=st=1724660679~exp=1724664279~hmac=2a488d73c0ab8ef00fa00d12528d9f1f14c8c061e83bfaeeef942d40b2fc43a5&w=826",
-    profileLink: "", // Added profile link state
-  });
-
-  const [followingCount, setFollowingCount] = useState(120);
-  const [followersCount, setFollowersCount] = useState(300);
-  const [isPremium, setIsPremium] = useState(false);
+  const { user } = useUser();
 
   const handleProfileUpdate = (e: any) => {
     e.preventDefault();
@@ -29,10 +20,7 @@ const ProfilePage = () => {
     // Logic for following/unfollowing
   };
 
-  const handlePremiumSubscription = () => {
-    // Handle premium membership payment logic here
-    setIsPremium(true);
-  };
+  const handlePremiumSubscription = () => {};
 
   return (
     <div className="container mx-auto px-6 bg-gray-900 text-white">
@@ -48,7 +36,7 @@ const ProfilePage = () => {
         </motion.h2>
         <div className="flex items-center">
           <img
-            src={userInfo.profilePicture}
+            src={user?.profilePhoto}
             alt="Profile"
             className="mr-4 h-24 w-24 rounded-full border-4 border-green-600"
           />
@@ -57,37 +45,22 @@ const ProfilePage = () => {
               <label className="block text-green-300">Name:</label>
               <Input
                 type="text"
-                value={userInfo.name}
-                onChange={(e) =>
-                  setUserInfo({ ...userInfo, name: e.target.value })
-                }
+                value={user?.name}
                 className="focus:outline-none bg-gray-700 text-white placeholder-gray-400"
                 placeholder="Enter your name"
               />
             </div>
+
             <div className="mb-2">
-              <label className="block text-green-300">Bio:</label>
-              <Textarea
-                value={userInfo.bio}
-                onChange={(e) =>
-                  setUserInfo({ ...userInfo, bio: e.target.value })
-                }
-                className="focus:outline-none bg-gray-700 text-white placeholder-gray-400"
-                placeholder="Tell us about yourself"
-              />
-            </div>
-            <div className="mb-2">
-              <label className="block text-green-300">Profile Link:</label>
+              <label className="block text-green-300">Email:</label>
               <Input
-                type="url"
-                value={userInfo.profileLink}
-                onChange={(e) =>
-                  setUserInfo({ ...userInfo, profileLink: e.target.value })
-                }
-                placeholder="https://example.com"
+                type="text"
+                value={user?.email}
                 className="focus:outline-none bg-gray-700 text-white placeholder-gray-400"
+                placeholder="Enter your name"
               />
             </div>
+
             <Button
               type="submit"
               className="mt-4 bg-green-600 hover:bg-green-700 transition duration-200"
@@ -110,15 +83,9 @@ const ProfilePage = () => {
         </motion.h2>
         <div className="flex items-center justify-between">
           <div className="text-green-300">
-            <p>Followers: {followersCount}</p>
-            <p>Following: {followingCount}</p>
+            <p>Followers: {user?.followersCount}</p>
+            <p>Following: {user?.followingCount}</p>
           </div>
-          <Button
-            onClick={toggleFollow}
-            className="bg-green-600 hover:bg-green-700 transition duration-200"
-          >
-            Follow/Unfollow
-          </Button>
         </div>
       </section>
 
@@ -132,7 +99,7 @@ const ProfilePage = () => {
         >
           Premium Membership
         </motion.h2>
-        {isPremium ? (
+        {user?.isPremium ? (
           <div className="flex items-center text-green-300">
             <CheckCircle className="mr-2 h-6 w-6 text-green-500" />
             <p>You are a premium member!</p>

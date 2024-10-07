@@ -9,17 +9,19 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { useDeleteRecipe } from "@/hooks/post.hook";
 
 export function DeleteAlert({ deleteId }: { deleteId: string }) {
-  const handleDelete = (deleteId: string) => {};
+  const { mutate: deleteRecipe } = useDeleteRecipe();
+
+  const handleDelete = (deleteId: string) => {
+    deleteRecipe(deleteId);
+  };
 
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <button
-          onClick={() => handleDelete(deleteId)}
-          className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-500"
-        >
+        <button className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-500">
           Delete
         </button>
       </AlertDialogTrigger>
@@ -33,7 +35,10 @@ export function DeleteAlert({ deleteId }: { deleteId: string }) {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction className="bg-red-500 hover:bg-red-600">
+          <AlertDialogAction
+            onClick={() => handleDelete(deleteId)}
+            className="bg-red-500 hover:bg-red-600"
+          >
             Continue
           </AlertDialogAction>
         </AlertDialogFooter>
