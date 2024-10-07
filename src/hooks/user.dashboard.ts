@@ -5,5 +5,7 @@ export const useGetMyRecipes = (_id: string) => {
   return useQuery({
     queryKey: ["GET_MY_RECIPE"],
     queryFn: () => GetMyRecipes(_id),
+    refetchInterval: 1000,
+    refetchIntervalInBackground: true,
   });
 };
