@@ -10,12 +10,12 @@ import {
 import { useRouter } from "next/navigation";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import { SharePostModal } from "../modals/SharePost";
 import { PostCardProps } from "@/types";
 import { toast } from "sonner";
 import { useUser } from "@/contexts/user.provider";
 import { UseDownVotePost, useUpvotePost } from "@/hooks/voting.hook";
 import { usePostComment } from "@/hooks/comment.hook";
+import DOMPurify from "dompurify"; // Import DOMPurify
 
 const PostCard: React.FC<{ post: PostCardProps }> = ({ post }) => {
   const [showComments, setShowComments] = useState(false);
@@ -38,7 +38,7 @@ const PostCard: React.FC<{ post: PostCardProps }> = ({ post }) => {
       const newComment = {
         comment,
         userId: user?._id,
-        profilePhoto: user?.profilePhoto, // Add profilePhoto here
+        profilePhoto: user?.profilePhoto,
       };
 
       // Update local state
@@ -80,11 +80,11 @@ const PostCard: React.FC<{ post: PostCardProps }> = ({ post }) => {
       <div className="flex items-center px-6 py-4">
         <img
           className="w-12 h-12 object-cover rounded-full"
-          src={post.userId.profilePhoto}
+          src={post?.userId?.profilePhoto}
           alt="Profile"
         />
         <div className="ml-4">
-          <h2 className="text-lg font-semibold">{post.userId.name}</h2>
+          <h2 className="text-lg font-semibold">{post.userId?.name}</h2>
           <p className="text-sm text-gray-500">{post.title}</p>
         </div>
         <button className="ml-auto">
@@ -95,15 +95,18 @@ const PostCard: React.FC<{ post: PostCardProps }> = ({ post }) => {
       {/* Show a preview of instructions */}
       <div className="px-6 py-4">
         <h3 className="text-md font-semibold">Instructions:</h3>
-        <p className="text-sm text-gray-700">
-          {post.instructions.slice(0, 50)}...{" "}
-          <span
-            onClick={handleSeeMoreClick}
-            className="text-blue-500 cursor-pointer"
-          >
-            See more
-          </span>
-        </p>
+        <div
+          className="text-sm text-gray-700"
+          dangerouslySetInnerHTML={{
+            __html: DOMPurify.sanitize(post.instructions.slice(0, 50) + "..."),
+          }}
+        />
+        <span
+          onClick={handleSeeMoreClick}
+          className="text-blue-500 cursor-pointer"
+        >
+          See more
+        </span>
       </div>
 
       {/* Image */}
@@ -156,10 +159,11 @@ const PostCard: React.FC<{ post: PostCardProps }> = ({ post }) => {
             >
               <MessageCircle className="w-6 h-6 mr-2" /> {comments.length}
             </button>
-            <SharePostModal />
           </div>
           <div className="text-gray-500">
-            <p className="text-sm">1 day ago</p>
+            <p className="text-sm">
+              Posted on {new Date(post?.createdAt).toLocaleDateString()}
+            </p>
           </div>
         </div>
       </div>

@@ -1,5 +1,10 @@
-import { CreateRecipePost, GetAllPosts, GetSinglePost } from "@/services/posts";
-import { IRecipe } from "@/types";
+import {
+  CreateRecipePost,
+  GetAllPosts,
+  GetSinglePost,
+  UpdateRecipe,
+} from "@/services/posts";
+import { IRecipe, TUpdateRecipe } from "@/types";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 
@@ -10,6 +15,21 @@ export const useCreateRecipePost = () => {
 
     onSuccess: () => {
       toast.success("Post created successfully");
+    },
+    onError: (error) => {
+      console.log(error);
+      toast.error(error.message);
+    },
+  });
+};
+
+export const useUpdateRecipe = (_id: string) => {
+  return useMutation<any, Error, TUpdateRecipe>({
+    mutationKey: ["UPDATE_RECIPE"],
+    mutationFn: async (updatedData) => UpdateRecipe(_id, updatedData),
+
+    onSuccess: () => {
+      toast.success("Recipe updated successfully");
     },
     onError: (error) => {
       console.log(error);

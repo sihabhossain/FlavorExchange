@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -14,50 +14,53 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import dynamic from "next/dynamic";
 import "react-quill/dist/quill.snow.css";
+import { TRecipe } from "@/types";
+import { useUpdateRecipe } from "@/hooks/post.hook";
+import { useUser } from "@/contexts/user.provider";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
-export function UpdateRecipeModal() {
-  const [title, setTitle] = useState("");
-  const [ingredients, setIngredients] = useState<
-    { name: string; checked: boolean }[]
-  >([]);
-  const [instructions, setInstructions] = useState("");
-  const [image, setImage] = useState("");
-  const [newIngredient, setNewIngredient] = useState("");
+export function UpdateRecipeModal({ recipe }: { recipe: TRecipe }) {
+  const [open, setOpen] = useState(false); // State to control the dialog's open state
+  const [title, setTitle] = useState(recipe.title || "");
+  const [instructions, setInstructions] = useState(recipe.instructions || "");
+  const [image, setImage] = useState(recipe.image || "");
 
-  const handleAddIngredient = () => {
-    if (newIngredient.trim()) {
-      setIngredients([...ingredients, { name: newIngredient, checked: false }]);
-      setNewIngredient("");
+  const { mutate: UpdateRecipe } = useUpdateRecipe(recipe?._id);
+  const { user } = useUser();
+
+  // Set default values from the recipe prop
+  useEffect(() => {
+    if (recipe) {
+      setTitle(recipe.title);
+      setInstructions(recipe.instructions);
+      setImage(recipe.image);
     }
-  };
+  }, [recipe]);
 
-  const toggleIngredientChecked = (index: number) => {
-    setIngredients((prevIngredients) =>
-      prevIngredients.map((ingredient, i) =>
-        i === index
-          ? { ...ingredient, checked: !ingredient.checked }
-          : ingredient
-      )
-    );
-  };
-
+  // Handle form submission
   const handleSubmit = async () => {
-    const recipeData = {
+    const updatedRecipeData = {
       title,
-      ingredients,
       instructions,
       image,
-      userId: "642fa8c28c1a4e5d12345678",
+      userId: user?._id,
     };
-    // Submit recipeData to your API
+
+    UpdateRecipe(updatedRecipeData, {
+      onSuccess: () => {
+        setOpen(false); // Close the modal on success
+      },
+    });
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-500">
+        <Button
+          onClick={() => setOpen(true)} // Open the modal on button click
+          className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-500"
+        >
           Update
         </Button>
       </DialogTrigger>
@@ -80,40 +83,6 @@ export function UpdateRecipeModal() {
               placeholder="Recipe Title"
               className="p-3 text-lg border rounded-md"
             />
-          </div>
-
-          {/* Ingredients Checklist */}
-          <div>
-            <h3 className="text-lg font-semibold mb-2">Ingredients</h3>
-            {ingredients.map((ingredient, index) => (
-              <div
-                key={index}
-                className="flex items-center justify-between p-2 bg-gray-100 rounded-md mb-2"
-              >
-                <label className="flex items-center space-x-3">
-                  <input
-                    type="checkbox"
-                    checked={ingredient.checked}
-                    onChange={() => toggleIngredientChecked(index)}
-                    className="form-checkbox"
-                  />
-                  <span className={ingredient.checked ? "line-through" : ""}>
-                    {ingredient.name}
-                  </span>
-                </label>
-              </div>
-            ))}
-            <div className="flex mt-2 space-x-3">
-              <Input
-                value={newIngredient}
-                onChange={(e) => setNewIngredient(e.target.value)}
-                placeholder="Add ingredient"
-                className="p-3 flex-grow rounded-md"
-              />
-              <Button onClick={handleAddIngredient} className="px-6 py-3">
-                Add
-              </Button>
-            </div>
           </div>
 
           {/* Instructions with Rich Text Editor */}
@@ -147,9 +116,9 @@ export function UpdateRecipeModal() {
           <Button
             type="button"
             onClick={handleSubmit}
-            className="px-8 py-3 rounded-md flex items-center text-white "
+            className="px-8 py-3 rounded-md flex items-center text-white"
           >
-            Create Recipe
+            Update Recipe
           </Button>
         </DialogFooter>
       </DialogContent>

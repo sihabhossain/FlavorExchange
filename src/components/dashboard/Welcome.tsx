@@ -7,7 +7,7 @@ const WelcomeMessage = ({
   userName,
   avatarUrl,
 }: {
-  userName: string;
+  userName: string | undefined;
   avatarUrl?: string;
 }) => {
   return (
