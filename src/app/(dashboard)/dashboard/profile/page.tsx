@@ -7,9 +7,16 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/contexts/user.provider";
+import { useGetSingleUser } from "@/hooks/user.hook";
 
 const ProfilePage = () => {
-  const { user } = useUser();
+  const { user: localUser } = useUser();
+
+  const { data } = useGetSingleUser(localUser?._id || "");
+
+  console.log(data);
+
+  const user = data?.data;
 
   const handleProfileUpdate = (e: any) => {
     e.preventDefault();
