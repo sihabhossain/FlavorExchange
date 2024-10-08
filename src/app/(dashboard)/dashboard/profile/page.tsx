@@ -14,40 +14,34 @@ const ProfilePage = () => {
   const { data } = useGetSingleUser(localUser?._id || "");
   const user = data?.data;
 
-  const { mutate: updateProfile } = useUpdateMyProfile();
+  const { mutate: updateProfile } = useUpdateMyProfile(localUser?._id || "");
 
-  const [profilePhoto, setProfilePhoto] = useState<File | null>(null);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [bio, setBio] = useState("");
+  const [profilePhoto, setProfilePhoto] = useState("");
 
   // Update state when user data is available
   useEffect(() => {
     if (user) {
       setName(user.name || "");
       setEmail(user.email || "");
+      setBio(user.bio || "");
+      setProfilePhoto(user.profilePhoto || "");
     }
   }, [user]);
 
   const handleProfileUpdate = async (e: React.FormEvent) => {
     e.preventDefault(); // Prevent the default form submission behavior
 
-    const formData = new FormData(); // Create a new FormData object
-    formData.append("name", name); // Append the name to the FormData
-    formData.append("email", email); // Append the email to the FormData
+    const updatedProfile = {
+      name,
+      email,
+      bio,
+      profilePhoto,
+    };
 
-    // Check if profilePhoto is selected and append it
-    if (profilePhoto) {
-      formData.append("profilePhoto", profilePhoto); // Append the profile photo
-    }
-
-    updateProfile(formData);
-  };
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setProfilePhoto(file);
-    }
+    updateProfile(updatedProfile);
   };
 
   const handlePremiumSubscription = () => {
@@ -68,7 +62,7 @@ const ProfilePage = () => {
         </motion.h2>
         <div className="flex items-center">
           <img
-            src={user?.profilePhoto || "/default-profile.png"} // Default profile image if user photo is not available
+            src={user?.profilePhoto}
             alt="Profile"
             className="mr-4 h-24 w-24 rounded-full border-4 border-green-600"
           />
@@ -95,13 +89,25 @@ const ProfilePage = () => {
               />
             </div>
 
+            <div className="mb-2">
+              <label className="block text-green-300">Bio:</label>
+              <Input
+                type="text"
+                value={bio}
+                onChange={(e) => setBio(e.target.value)}
+                className="focus:outline-none bg-gray-700 text-white placeholder-gray-400"
+                placeholder="Enter your bio"
+              />
+            </div>
+
             <div className="mb-4">
-              <label className="block text-green-300">Profile Photo:</label>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-                className="mt-2 text-white"
+              <label className="block text-green-300">Profile URL:</label>
+              <Input
+                type="text"
+                value={profilePhoto}
+                onChange={(e) => setProfilePhoto(e.target.value)}
+                className="focus:outline-none bg-gray-700 text-white placeholder-gray-400"
+                placeholder="Enter your profile URL"
               />
             </div>
 

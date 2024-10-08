@@ -12,13 +12,20 @@ export const GetMyRecipes = async (_id: string) => {
   }
 };
 
-export const UpdateMyProfile = async (updatedInfo: ProfileFormData) => {
+export const UpdateMyProfile = async (
+  _id: string,
+  updatedInfo: ProfileFormData
+) => {
   try {
-    const { data } = await axiosInstance.post("/profile", updatedInfo, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
+    const { data } = await axiosInstance.put(
+      `/users/update/${_id}`,
+      updatedInfo,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
     return data;
   } catch (err: any) {

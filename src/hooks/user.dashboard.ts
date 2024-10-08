@@ -17,10 +17,10 @@ export const useGetMyRecipes = (_id: string) => {
   });
 };
 
-export const useUpdateMyProfile = () => {
+export const useUpdateMyProfile = (_id: string) => {
   return useMutation<any, Error, ProfileFormData>({
     mutationKey: ["UPDATE_PROFILE"],
-    mutationFn: async (updatedInfo) => await UpdateMyProfile(updatedInfo),
+    mutationFn: async (updatedInfo) => await UpdateMyProfile(_id, updatedInfo),
 
     onSuccess: () => {
       toast.success("Profile updated successfully");

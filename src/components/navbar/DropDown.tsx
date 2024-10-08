@@ -44,7 +44,6 @@ export function UserDropdown() {
           <DropdownMenuItem>
             <User className="mr-2 h-4 w-4" />
             <Link href={"/dashboard/profile"}>Profile</Link>
-            <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
@@ -53,7 +52,6 @@ export function UserDropdown() {
         <DropdownMenuItem onClick={handleLogout}>
           <LogOut className="mr-2 h-4 w-4" />
           <span>Log out</span>
-          <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

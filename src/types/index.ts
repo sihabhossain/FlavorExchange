@@ -89,5 +89,6 @@ export type TUpdateRecipe = {
 export type ProfileFormData = {
   name: string;
   email: string;
-  profilePhoto?: File;
+  bio?: string;
+  profilePhoto?: string;
 };
