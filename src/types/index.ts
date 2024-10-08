@@ -24,6 +24,7 @@ export interface IUser {
   mobileNumber: string;
   profilePhoto: string;
   isPremium?: boolean;
+  isBlocked?: boolean;
   followersCount?: number;
   followingCount?: number;
   createdAt?: string;

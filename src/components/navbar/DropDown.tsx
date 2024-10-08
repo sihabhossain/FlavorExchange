@@ -22,9 +22,8 @@ export function UserDropdown() {
 
   const handleLogout = () => {
     logout();
-    userLoading(true);
-
     router.push("/login");
+    userLoading(true);
   };
 
   return (

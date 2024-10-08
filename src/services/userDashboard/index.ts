@@ -25,3 +25,21 @@ export const UpdateMyProfile = async (updatedInfo: ProfileFormData) => {
     throw new Error(err);
   }
 };
+
+export const BlockUser = async (_id: string) => {
+  try {
+    const { data } = await axiosInstance.put(`/users/block/${_id}`);
+    return data;
+  } catch (err: any) {
+    throw new Error(err);
+  }
+};
+
+export const DeleteUser = async (_id: string) => {
+  try {
+    const { data } = await axiosInstance.delete(`/users/delete/${_id}`);
+    return data;
+  } catch (err: any) {
+    throw new Error(err);
+  }
+};

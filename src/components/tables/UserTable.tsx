@@ -10,43 +10,45 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
-
-const users = [
-  {
-    _id: "66f980712c492010e0de1658",
-    name: "Sihab Hossain",
-    role: "USER",
-    email: "sihab@gmail.com",
-    status: "ACTIVE",
-    mobileNumber: "1234567890",
-    profilePhoto:
-      "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
-    createdAt: "2024-09-29T16:29:37.122Z",
-    isPremium: true, // New property
-  },
-  // Add more users here...
-];
+import { useGetAllUsers } from "@/hooks/user.hook";
+import { IUser } from "@/types";
+import { useUser } from "@/contexts/user.provider";
+import { useBlockUser, useDeleteUser } from "@/hooks/user.dashboard";
+import { CreateUserModal } from "../modals/CreateUserModal";
 
 export function UserTable() {
-  const [userData, setUserData] = useState(users);
+  const { data } = useGetAllUsers();
+  const { user } = useUser();
+  const currentUserId = user?._id;
+  const users = data?.data || [];
+
+  // Block user API
+  const { mutate: blockUser } = useBlockUser();
+  // Delete user API
+  const { mutate: deleteUser } = useDeleteUser();
 
   const handleBlockUnblock = (id: string) => {
-    setUserData((prevData) =>
-      prevData.map((user) =>
-        user._id === id
-          ? { ...user, status: user.status === "ACTIVE" ? "BLOCKED" : "ACTIVE" }
-          : user
-      )
-    );
+    // Logic for blocking or unblocking a user
+    blockUser(id);
   };
 
   const handleDeleteUser = (id: string) => {
-    setUserData((prevData) => prevData.filter((user) => user._id !== id));
+    // Logic for deleting a user
+    deleteUser(id);
   };
+
+  // Filter out the current user from the list
+  const filteredUsers = users.filter(
+    (user: IUser) => user._id !== currentUserId
+  );
 
   return (
     <div>
+      {/* Create User Button */}
+      <div className="mb-4">
+        <CreateUserModal />
+      </div>
+
       {/* Table for large screens */}
       <div className="hidden md:block overflow-x-auto">
         <Table className="min-w-full">
@@ -61,13 +63,12 @@ export function UserTable() {
               <TableHead>Role</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Mobile</TableHead>
-              <TableHead>Premium</TableHead> {/* New column */}
-              <TableHead className="text-right">Registration Date</TableHead>
+              <TableHead>Premium</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {userData.map((user) => (
+            {filteredUsers.map((user: IUser) => (
               <TableRow key={user._id}>
                 <TableCell>
                   <img
@@ -88,20 +89,22 @@ export function UserTable() {
                     <span className="text-red-600">No</span>
                   )}
                 </TableCell>
-                <TableCell className="text-right">
-                  {new Date(user.createdAt).toLocaleDateString()}
-                </TableCell>
+
                 <TableCell>
                   <div className="flex flex-col space-y-2 md:space-y-0 md:flex-row md:space-x-2">
-                    <Button
-                      variant={
-                        user.status === "ACTIVE" ? "destructive" : "default"
-                      }
-                      onClick={() => handleBlockUnblock(user._id)}
-                      className="w-full md:w-auto"
-                    >
-                      {user.status === "ACTIVE" ? "Block" : "Unblock"}
-                    </Button>
+                    {user.isBlocked ? (
+                      <span className="text-red-600 font-medium">Blocked</span> // Show "Blocked" text if the user is blocked
+                    ) : (
+                      <Button
+                        variant={
+                          user.status === "ACTIVE" ? "destructive" : "default"
+                        }
+                        onClick={() => handleBlockUnblock(user._id)}
+                        className="w-full md:w-auto"
+                      >
+                        {user.status === "ACTIVE" ? "Block" : "Unblock"}
+                      </Button>
+                    )}
                     <Button
                       variant="destructive"
                       onClick={() => handleDeleteUser(user._id)}
@@ -119,10 +122,10 @@ export function UserTable() {
 
       {/* Cards for mobile view */}
       <div className="md:hidden space-y-4">
-        {userData.map((user) => (
+        {filteredUsers.map((user: IUser) => (
           <div
             key={user._id}
-            className="border border-gray-200 dark:border-gray-700 rounded-lg p-4  dark:bg-gray-800"
+            className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 dark:bg-gray-800"
           >
             <div className="flex items-center space-x-4">
               <img
@@ -150,23 +153,20 @@ export function UserTable() {
                 <span className="font-medium">
                   {user.isPremium ? "Yes" : "No"}
                 </span>
-              </p>{" "}
-              {/* New line for Premium */}
-              <p>
-                Registration Date:{" "}
-                <span className="font-medium">
-                  {new Date(user.createdAt).toLocaleDateString()}
-                </span>
               </p>
             </div>
             <div className="mt-4 flex space-x-2">
-              <Button
-                variant={user.status === "ACTIVE" ? "destructive" : "default"}
-                onClick={() => handleBlockUnblock(user._id)}
-                className="w-full"
-              >
-                {user.status === "ACTIVE" ? "Block" : "Unblock"}
-              </Button>
+              {user.isBlocked ? (
+                <span className="text-red-600 font-medium">Blocked</span> // Show "Blocked" text if the user is blocked
+              ) : (
+                <Button
+                  variant={user.status === "ACTIVE" ? "destructive" : "default"}
+                  onClick={() => handleBlockUnblock(user._id)}
+                  className="w-full"
+                >
+                  {user.status === "ACTIVE" ? "Block" : "Unblock"}
+                </Button>
+              )}
               <Button
                 variant="destructive"
                 onClick={() => handleDeleteUser(user._id)}
