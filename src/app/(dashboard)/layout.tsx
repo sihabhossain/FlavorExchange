@@ -15,9 +15,10 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/contexts/user.provider";
+import { logout } from "@/services/auth";
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
-  const { user } = useUser();
+  const { user, setIsLoading: userLoading } = useUser();
 
   const role = user?.role;
 
@@ -25,9 +26,9 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
 
   const handleLogout = () => {
-    // Handle logout logic here (e.g., clear token or call an API)
-    router.push("/");
-    console.log("User logged out successfully");
+    logout();
+    router.push("/login");
+    userLoading(true);
   };
 
   // Dynamic navigation links based on the role
