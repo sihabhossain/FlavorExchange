@@ -54,6 +54,21 @@ export const useDeleteRecipe = () => {
   });
 };
 
+export const useUnpublishRecipe = () => {
+  return useMutation({
+    mutationKey: ["UNPUBLISH_RECIPE"],
+    mutationFn: async (_id: string) => await DeleteRecipe(_id),
+
+    onSuccess: () => {
+      toast.success("Recipe unpublished successfully");
+    },
+    onError: (error) => {
+      console.error(error);
+      toast.error(error.message);
+    },
+  });
+};
+
 export const useGetAllPosts = () => {
   return useQuery({
     queryKey: ["GET_ALL_POSTS"],
