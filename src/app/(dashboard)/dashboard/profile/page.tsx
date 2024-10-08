@@ -1,33 +1,58 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Upload, User, CheckCircle } from "lucide-react";
+import { CheckCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/contexts/user.provider";
 import { useGetSingleUser } from "@/hooks/user.hook";
+import { useUpdateMyProfile } from "@/hooks/user.dashboard";
 
 const ProfilePage = () => {
   const { user: localUser } = useUser();
-
   const { data } = useGetSingleUser(localUser?._id || "");
-
-  console.log(data);
-
   const user = data?.data;
 
-  const handleProfileUpdate = (e: any) => {
-    e.preventDefault();
-    // Handle profile update logic here
+  const { mutate: updateProfile } = useUpdateMyProfile();
+
+  const [profilePhoto, setProfilePhoto] = useState<File | null>(null);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+
+  // Update state when user data is available
+  useEffect(() => {
+    if (user) {
+      setName(user.name || "");
+      setEmail(user.email || "");
+    }
+  }, [user]);
+
+  const handleProfileUpdate = async (e: React.FormEvent) => {
+    e.preventDefault(); // Prevent the default form submission behavior
+
+    const formData = new FormData(); // Create a new FormData object
+    formData.append("name", name); // Append the name to the FormData
+    formData.append("email", email); // Append the email to the FormData
+
+    // Check if profilePhoto is selected and append it
+    if (profilePhoto) {
+      formData.append("profilePhoto", profilePhoto); // Append the profile photo
+    }
+
+    updateProfile(formData);
   };
 
-  const toggleFollow = () => {
-    // Logic for following/unfollowing
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setProfilePhoto(file);
+    }
   };
 
-  const handlePremiumSubscription = () => {};
+  const handlePremiumSubscription = () => {
+    // Handle premium subscription logic here
+  };
 
   return (
     <div className="container mx-auto px-6 bg-gray-900 text-white">
@@ -43,7 +68,7 @@ const ProfilePage = () => {
         </motion.h2>
         <div className="flex items-center">
           <img
-            src={user?.profilePhoto}
+            src={user?.profilePhoto || "/default-profile.png"} // Default profile image if user photo is not available
             alt="Profile"
             className="mr-4 h-24 w-24 rounded-full border-4 border-green-600"
           />
@@ -52,7 +77,8 @@ const ProfilePage = () => {
               <label className="block text-green-300">Name:</label>
               <Input
                 type="text"
-                value={user?.name}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 className="focus:outline-none bg-gray-700 text-white placeholder-gray-400"
                 placeholder="Enter your name"
               />
@@ -61,10 +87,21 @@ const ProfilePage = () => {
             <div className="mb-2">
               <label className="block text-green-300">Email:</label>
               <Input
-                type="text"
-                value={user?.email}
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="focus:outline-none bg-gray-700 text-white placeholder-gray-400"
-                placeholder="Enter your name"
+                placeholder="Enter your email"
+              />
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-green-300">Profile Photo:</label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="mt-2 text-white"
               />
             </div>
 
@@ -90,8 +127,8 @@ const ProfilePage = () => {
         </motion.h2>
         <div className="flex items-center justify-between">
           <div className="text-green-300">
-            <p>Followers: {user?.followersCount}</p>
-            <p>Following: {user?.followingCount}</p>
+            <p>Followers: {user?.followersCount || 0}</p>
+            <p>Following: {user?.followingCount || 0}</p>
           </div>
         </div>
       </section>

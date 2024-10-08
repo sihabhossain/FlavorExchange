@@ -1,28 +1,25 @@
+"use client";
+
 import React from "react";
-import {
-  LayoutDashboard,
-  Settings,
-  House,
-  PhoneCall,
-  Info,
-  Pizza,
-} from "lucide-react";
+import { LayoutDashboard, House, PhoneCall, Info } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { CreateRecipeModal } from "../modals/CreateRecipeModal";
 import Link from "next/link";
+import { useUser } from "@/contexts/user.provider";
 
 const Sidebar = () => {
+  const { user } = useUser();
+
   return (
     <aside className="fixed top-20 left-0 h-full w-[250px] mx-4 flex flex-col items-center py-6">
       {/* Profile Section */}
       <div className="flex items-center bg-white rounded-lg shadow-md w-full px-6 p-4 mb-8">
-        <Avatar className="w-16 h-16 mr-4">
-          <AvatarImage src="https://github.com/shadcn.png" alt="John Doe" />
-          <AvatarFallback>JD</AvatarFallback>
+        <Avatar className="w-12 h-12 object-cover rounded-full mr-2">
+          <AvatarImage src={user?.profilePhoto} alt={user?.name} />
+          <AvatarFallback>user</AvatarFallback>
         </Avatar>
         <div className="flex flex-col">
-          <h2 className="text-lg font-semibold text-gray-800">John Doe</h2>
-          <p className="text-sm text-gray-500">@johndoe</p>
+          <h2 className="text-lg font-semibold text-gray-800">{user?.name}</h2>
         </div>
       </div>
 

@@ -84,3 +84,9 @@ export type TUpdateRecipe = {
   image: string;
   userId: string | undefined;
 };
+
+export type ProfileFormData = {
+  name: string;
+  email: string;
+  profilePhoto?: File;
+};

@@ -12,7 +12,7 @@ import { toast } from "sonner";
 export const useCreateRecipePost = () => {
   return useMutation<any, Error, IRecipe>({
     mutationKey: ["CREATE_POST"],
-    mutationFn: async (postData) => CreateRecipePost(postData),
+    mutationFn: async (postData) => await CreateRecipePost(postData),
 
     onSuccess: () => {
       toast.success("Post created successfully");
@@ -27,7 +27,7 @@ export const useCreateRecipePost = () => {
 export const useUpdateRecipe = (_id: string) => {
   return useMutation<any, Error, TUpdateRecipe>({
     mutationKey: ["UPDATE_RECIPE"],
-    mutationFn: async (updatedData) => UpdateRecipe(_id, updatedData),
+    mutationFn: async (updatedData) => await UpdateRecipe(_id, updatedData),
 
     onSuccess: () => {
       toast.success("Recipe updated successfully");
@@ -42,7 +42,7 @@ export const useUpdateRecipe = (_id: string) => {
 export const useDeleteRecipe = () => {
   return useMutation({
     mutationKey: ["DELETE_RECIPE"],
-    mutationFn: async (_id: string) => DeleteRecipe(_id),
+    mutationFn: async (_id: string) => await DeleteRecipe(_id),
 
     onSuccess: () => {
       toast.success("Recipe deleted successfully");
