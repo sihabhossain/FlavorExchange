@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { useUser } from "@/contexts/user.provider";
 import { useGetSingleUser } from "@/hooks/user.hook";
 import { useUpdateMyProfile } from "@/hooks/user.dashboard";
+import { loadStripe } from "@stripe/stripe-js";
+import { toast } from "sonner";
 
 const ProfilePage = () => {
   const { user: localUser } = useUser();
@@ -20,6 +22,7 @@ const ProfilePage = () => {
   const [email, setEmail] = useState("");
   const [bio, setBio] = useState("");
   const [profilePhoto, setProfilePhoto] = useState("");
+  const [loading, setLoading] = useState(false); // Loading state for the button
 
   // Update state when user data is available
   useEffect(() => {
@@ -44,8 +47,50 @@ const ProfilePage = () => {
     updateProfile(updatedProfile);
   };
 
-  const handlePremiumSubscription = () => {
-    // Handle premium subscription logic here
+  // Load Stripe with your test publishable key
+  const stripePromise = loadStripe(
+    `${process.env.NEXT_PUBLIC_STRIPE_TEST_KEY}`
+  );
+
+  const handleOneTimePayment = async () => {
+    setLoading(true); // Set loading to true
+
+    const stripe = await stripePromise;
+
+    if (!stripe) {
+      toast.error("Stripe has not loaded correctly.");
+      setLoading(false); // Reset loading state
+      return;
+    }
+
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_API}/users/create-checkout-session`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          priceId: `${process.env.NEXT_PUBLIC_PRICE_ID}`,
+        }),
+      }
+    );
+
+    const session = await response.json();
+
+    if (!session.data.id) {
+      toast.error("Failed to create a checkout session.");
+      setLoading(false); // Reset loading state
+      return;
+    }
+
+    if (session?.data.url) {
+      window.location.href = session.data.url;
+    } else {
+      toast.error("Failed to create a checkout session.");
+    }
+
+    setLoading(false); // Reset loading state after processing
   };
 
   return (
@@ -156,10 +201,12 @@ const ProfilePage = () => {
           </div>
         ) : (
           <Button
-            onClick={handlePremiumSubscription}
+            onClick={handleOneTimePayment}
             className="mt-4 bg-green-600 hover:bg-green-700 transition duration-200"
+            disabled={loading} // Disable the button while loading
           >
-            Subscribe to Premium
+            {loading ? "Processing..." : "Subscribe to Premium"}{" "}
+            {/* Show loading state */}
           </Button>
         )}
       </section>
