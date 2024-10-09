@@ -6,9 +6,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { CreateRecipeModal } from "../modals/CreateRecipeModal";
 import Link from "next/link";
 import { useUser } from "@/contexts/user.provider";
+import { useGetSingleUser } from "@/hooks/user.hook";
 
 const Sidebar = () => {
-  const { user } = useUser();
+  const { user: userData } = useUser();
+  const { data } = useGetSingleUser(userData?._id || "");
+
+  const user = data?.data;
 
   return (
     <aside className="fixed top-20 left-0 h-full w-[250px] mx-4 flex flex-col items-center py-6">

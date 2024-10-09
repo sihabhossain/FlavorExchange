@@ -15,7 +15,8 @@ import { toast } from "sonner";
 import { useUser } from "@/contexts/user.provider";
 import { UseDownVotePost, useUpvotePost } from "@/hooks/voting.hook";
 import { usePostComment } from "@/hooks/comment.hook";
-import DOMPurify from "dompurify"; // Import DOMPurify
+import DOMPurify from "dompurify";
+import { useGetSingleUser } from "@/hooks/user.hook";
 
 const PostCard: React.FC<{ post: PostCardProps }> = ({ post }) => {
   const [showComments, setShowComments] = useState(false);
@@ -25,7 +26,11 @@ const PostCard: React.FC<{ post: PostCardProps }> = ({ post }) => {
   const [downvotes, setDownvotes] = useState(post.downvotes);
   const router = useRouter();
 
-  const { user } = useUser();
+  const { user: userData } = useUser();
+  console.log(userData);
+  const { data } = useGetSingleUser(userData?._id || "");
+
+  const user = data?.data;
 
   // Hooks for upvoting and downvoting posts
   const { mutate: upvoteMutate } = useUpvotePost(post._id);
@@ -34,11 +39,12 @@ const PostCard: React.FC<{ post: PostCardProps }> = ({ post }) => {
 
   const handleCommentSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (comment.trim()) {
+    if (comment.trim() && user) {
+      // Ensure user is defined
       const newComment = {
         comment,
-        userId: user?._id,
-        profilePhoto: user?.profilePhoto,
+        userId: user._id,
+        profilePhoto: user.profilePhoto,
       };
 
       // Update local state
@@ -47,6 +53,8 @@ const PostCard: React.FC<{ post: PostCardProps }> = ({ post }) => {
 
       // Post the comment to the server
       postCommentMutate({ _id: post._id, postData: newComment });
+    } else {
+      toast.error("You must be logged in to comment.");
     }
   };
 
@@ -80,11 +88,13 @@ const PostCard: React.FC<{ post: PostCardProps }> = ({ post }) => {
       <div className="flex items-center px-6 py-4">
         <img
           className="w-12 h-12 object-cover rounded-full"
-          src={post?.userId?.profilePhoto}
+          src={post?.userId?.profilePhoto || "/default-profile.png"} // Fallback image
           alt="Profile"
         />
         <div className="ml-4">
-          <h2 className="text-lg font-semibold">{post.userId?.name}</h2>
+          <h2 className="text-lg font-semibold">
+            {post.userId?.name || "Anonymous"}
+          </h2>
           <p className="text-sm text-gray-500">{post.title}</p>
         </div>
         <button className="ml-auto">
@@ -142,19 +152,19 @@ const PostCard: React.FC<{ post: PostCardProps }> = ({ post }) => {
         <div className="flex justify-between items-center">
           <div className="flex space-x-6">
             <button
-              className="flex items-center  text-green-500"
+              className="flex items-center text-green-500"
               onClick={handleUpvote}
             >
               <ThumbsUp className="w-6 h-6 mr-2" /> {upvotes}
             </button>
             <button
-              className="flex items-center  text-red-500"
+              className="flex items-center text-red-500"
               onClick={handleDownvote}
             >
               <ThumbsDown className="w-6 h-6 mr-2" /> {downvotes}
             </button>
             <button
-              className="flex items-center  text-blue-500"
+              className="flex items-center text-blue-500"
               onClick={() => setShowComments(!showComments)}
             >
               <MessageCircle className="w-6 h-6 mr-2" /> {comments.length}
@@ -174,7 +184,7 @@ const PostCard: React.FC<{ post: PostCardProps }> = ({ post }) => {
           <div className="flex space-x-4 mb-4">
             <img
               className="w-10 h-10 object-cover rounded-full"
-              src={user?.profilePhoto}
+              src={user?.profilePhoto || "/default-profile.png"} // Fallback image
               alt="User"
             />
             <form className="flex-1 flex" onSubmit={handleCommentSubmit}>
@@ -201,7 +211,7 @@ const PostCard: React.FC<{ post: PostCardProps }> = ({ post }) => {
                 <div key={c._id} className="flex items-center mb-2">
                   <img
                     className="w-8 h-8 object-cover rounded-full mr-2"
-                    src={c.userId?.profilePhoto}
+                    src={c.userId?.profilePhoto || "/default-profile.png"} // Fallback image
                     alt="Commenter"
                   />
                   <p className="text-sm">{c.comment}</p>

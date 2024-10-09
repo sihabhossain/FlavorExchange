@@ -35,7 +35,8 @@ const Home = () => {
   return (
     <div>
       {isError && <p className="text-center py-4">Error loading posts.</p>}
-      {posts.length > 0 && posts.map((post) => <PostCard post={post} />)}
+      {posts.length > 0 &&
+        posts.map((post, index) => <PostCard key={index} post={post} />)}
       {isLoading && <p className="text-center py-4">Loading posts...</p>}
     </div>
   );

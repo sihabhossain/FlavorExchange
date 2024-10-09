@@ -15,10 +15,15 @@ import Link from "next/link";
 import { useUser } from "@/contexts/user.provider";
 import { useRouter } from "next/navigation";
 import { logout } from "@/services/auth";
+import { useGetSingleUser } from "@/hooks/user.hook";
 
 export function UserDropdown() {
   const router = useRouter();
-  const { user, setIsLoading: userLoading } = useUser();
+
+  const { user: userData, setIsLoading: userLoading } = useUser();
+  const { data } = useGetSingleUser(userData?._id || "");
+
+  const user = data?.data;
 
   const handleLogout = () => {
     logout();

@@ -8,7 +8,7 @@ export const useGetAllUsers = () => {
     queryKey: ["GET_USERS"],
     queryFn: () => GetAllUsers(),
 
-    refetchInterval: 500,
+    refetchInterval: 1000,
     refetchIntervalInBackground: true,
   });
 };

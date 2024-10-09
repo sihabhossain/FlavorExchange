@@ -12,6 +12,8 @@ const page = () => {
 
   const user = data?.data;
 
+  
+
   return (
     <WelcomeMessage avatarUrl={user?.profilePhoto} userName={user?.name} />
   );

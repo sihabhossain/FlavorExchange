@@ -17,14 +17,15 @@ import { useParams } from "next/navigation";
 import { useGetSinglePost } from "@/hooks/post.hook";
 import { PostCardProps } from "@/types";
 import DOMPurify from "dompurify";
+import { useGetSingleUser } from "@/hooks/user.hook";
 
 const PostDetails: React.FC = () => {
   const { id } = useParams();
   const postId = Array.isArray(id) ? id[0] : id;
 
   // Use the custom hook to fetch post data
-  const { data } = useGetSinglePost(postId);
-  const post = data?.data as PostCardProps; // Type assertion for post
+  const { data: postData } = useGetSinglePost(postId);
+  const post = postData?.data as PostCardProps; // Type assertion for post
 
   const [showComments, setShowComments] = useState(false);
   const [comment, setComment] = useState("");
@@ -32,7 +33,8 @@ const PostDetails: React.FC = () => {
   const [upvotes, setUpvotes] = useState(post?.upvotes || 0);
   const [downvotes, setDownvotes] = useState(post?.downvotes || 0);
 
-  const { user } = useUser();
+  const { user: userData } = useUser();
+  const { data: user } = useGetSingleUser(userData?._id || "");
 
   // Hooks for upvoting and downvoting posts
   const { mutate: upvoteMutate } = useUpvotePost(post?._id);
