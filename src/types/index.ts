@@ -52,7 +52,7 @@ export interface PostCardProps {
 }
 
 export interface IComment {
-  userId: string | undefined;
+  userId: string;
   comment: string;
 }
 

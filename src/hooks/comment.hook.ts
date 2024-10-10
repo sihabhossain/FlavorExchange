@@ -23,11 +23,15 @@ export const useEditComment = () => {
   return useMutation<
     void,
     Error,
-    { _id: string; commentId: string; postData: IComment }
+    {
+      _id: string;
+      commentId: string;
+      postData: { updatedComment: string; userId: string };
+    }
   >({
     mutationKey: ["EDIT_COMMENT"],
     mutationFn: async ({ _id, commentId, postData }) => {
-      return await EditComment(_id, commentId, postData);
+      await EditComment(_id, commentId, postData);
     },
     onSuccess: () => {
       toast.success("Comment edited successfully");
@@ -43,11 +47,11 @@ export const useDeleteComment = () => {
   return useMutation<
     void,
     Error,
-    { _id: string; commentId: string; userId: string }
+    { recipeId: string; commentId: string; userId: string }
   >({
     mutationKey: ["DELETE_COMMENT"],
-    mutationFn: async ({ _id, commentId, userId }) => {
-      return await DeleteComment(_id, commentId, userId);
+    mutationFn: async ({ recipeId, commentId, userId }) => {
+      await DeleteComment(recipeId, commentId, userId);
     },
     onSuccess: () => {
       toast.success("Comment deleted successfully");

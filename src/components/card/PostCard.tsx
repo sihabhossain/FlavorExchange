@@ -62,20 +62,33 @@ const PostCard: React.FC<{ post: PostCardProps }> = ({ post }) => {
   };
 
   const handleCommentEdit = (id: string) => {
-    const updatedComments = comments.map((c) => {
-      if (c._id === id) {
-        return { ...c, comment: editCommentText };
-      }
-      return c;
-    });
-    setComments(updatedComments);
-    setEditCommentId(null);
-    setEditCommentText("");
+    if (editCommentText.trim()) {
+      const updatedComment = {
+        updatedComment: editCommentText, // Key matches your body structure
+        userId: user?._id, // Pass user ID from context or state
+      };
+
+      // Persist the edited comment
+      editCommentMutate({
+        _id: post?._id, // Pass recipe ID
+        commentId: id, // Pass comment ID
+        postData: updatedComment, // Ensure correct data structure
+      });
+    } else {
+      toast.error("Comment cannot be empty.");
+    }
   };
 
-  const handleCommentDelete = (id: string) => {
-    const updatedComments = comments.filter((c) => c._id !== id);
-    setComments(updatedComments);
+  const handleCommentDelete = (commentId: string) => {
+    if (user?._id) {
+      deleteCommentMutate({
+        recipeId: post?._id, // Assuming `post._id` is the recipe ID
+        commentId: commentId, // The ID of the comment you want to delete
+        userId: user?._id, // The current user's ID
+      });
+    } else {
+      toast.error("User not authenticated.");
+    }
   };
 
   const handleUpgradeClick = () => {
@@ -224,7 +237,7 @@ const PostCard: React.FC<{ post: PostCardProps }> = ({ post }) => {
 
           {/* Render Comments */}
           {comments.map((c) => (
-            <div key={c._id} className="flex items-center mb-2 relative">
+            <div key={c.id} className="flex items-center mb-2 relative">
               <img
                 className="w-8 h-8 object-cover rounded-full mr-2"
                 src={c.userId?.profilePhoto || "/default-profile.png"} // Fallback image
@@ -246,7 +259,7 @@ const PostCard: React.FC<{ post: PostCardProps }> = ({ post }) => {
                 <div className="absolute right-0 bg-white shadow-lg rounded-md z-10">
                   <button
                     onClick={() => {
-                      setEditCommentId(c._id);
+                      setEditCommentId(c.id);
                       setEditCommentText(c.comment);
                       setShowOptions((prev) => ({ ...prev, [c._id]: false }));
                     }}
@@ -256,7 +269,7 @@ const PostCard: React.FC<{ post: PostCardProps }> = ({ post }) => {
                   </button>
                   <button
                     onClick={() => {
-                      handleCommentDelete(c._id);
+                      handleCommentDelete(c.id);
                       setShowOptions((prev) => ({ ...prev, [c._id]: false }));
                     }}
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
@@ -278,13 +291,7 @@ const PostCard: React.FC<{ post: PostCardProps }> = ({ post }) => {
             src={user?.profilePhoto || "/default-profile.png"} // Fallback image
             alt="User"
           />
-          <form
-            className="flex-1 flex"
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleCommentEdit(editCommentId);
-            }}
-          >
+          <form className="flex-1 flex">
             <Input
               type="text"
               value={editCommentText}
@@ -293,6 +300,10 @@ const PostCard: React.FC<{ post: PostCardProps }> = ({ post }) => {
               placeholder="Edit comment..."
             />
             <Button
+              onClick={(e) => {
+                e.preventDefault();
+                handleCommentEdit(editCommentId);
+              }}
               type="submit"
               className="ml-2 text-white rounded-full px-4 py-2"
             >

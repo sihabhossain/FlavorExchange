@@ -22,14 +22,14 @@ export const PostComment = async (_id: string, postData: IComment) => {
 };
 
 export const EditComment = async (
-  _id: string,
-  commentId: string,
-  postData: IComment
+  _id: string, // Recipe ID
+  commentId: string, // Comment ID
+  postData: { updatedComment: string; userId: string } // Body structure
 ) => {
   try {
     const { data } = await axiosInstance.put(
-      `/recipe/${_id}/comment/${commentId}`,
-      postData,
+      `/recipe/${_id}/comment/${commentId}`, // Correct URL path
+      postData, // Body data
       {
         headers: {
           "Content-Type": "application/json",
@@ -39,20 +39,20 @@ export const EditComment = async (
 
     return data;
   } catch (err: any) {
-    throw new Error(err);
+    throw new Error(err.response?.data?.message || "Failed to edit comment");
   }
 };
 
 export const DeleteComment = async (
-  _id: string,
-  commentId: string,
-  userId: string
+  recipeId: string, // Recipe ID
+  commentId: string, // Comment ID
+  userId: string // User ID for authorization
 ) => {
   try {
     const { data } = await axiosInstance.delete(
-      `/recipe/${_id}/comment/${commentId}`,
+      `/recipe/${recipeId}/comment/${commentId}`, // Correct URL
       {
-        data: { userId }, // Send userId in the body
+        data: { userId }, // Sending userId in the body
         headers: {
           "Content-Type": "application/json",
         },
@@ -61,6 +61,6 @@ export const DeleteComment = async (
 
     return data;
   } catch (err: any) {
-    throw new Error(err);
+    throw new Error(err.response?.data?.message || "Failed to delete comment");
   }
 };
