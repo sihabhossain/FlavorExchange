@@ -16,6 +16,8 @@ export interface IRecipe {
 
 // Define the User type
 export interface IUser {
+  followers: any;
+  bio: string;
   _id: string;
   name: string;
   role: string;
@@ -93,3 +95,8 @@ export type ProfileFormData = {
   profilePhoto?: string;
   isPremium?: boolean;
 };
+
+// Define the interface for the request body
+export interface FollowUserRequestBody {
+  followingId: string;
+}

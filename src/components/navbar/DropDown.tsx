@@ -18,18 +18,10 @@ import { logout } from "@/services/auth";
 import { useGetSingleUser } from "@/hooks/user.hook";
 
 export function UserDropdown() {
-  const router = useRouter();
-
   const { user: userData, setIsLoading: userLoading } = useUser();
   const { data } = useGetSingleUser(userData?._id || "");
 
   const user = data?.data;
-
-  const handleLogout = () => {
-    logout();
-    router.push("/login");
-    userLoading(true);
-  };
 
   return (
     <DropdownMenu>
@@ -42,23 +34,6 @@ export function UserDropdown() {
           <AvatarFallback>CN</AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56">
-        <DropdownMenuLabel>My Account</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuGroup>
-          <DropdownMenuItem>
-            <User className="mr-2 h-4 w-4" />
-            <Link href={"/dashboard/profile"}>Profile</Link>
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
-        <DropdownMenuSeparator />
-
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={handleLogout}>
-          <LogOut className="mr-2 h-4 w-4" />
-          <span>Log out</span>
-        </DropdownMenuItem>
-      </DropdownMenuContent>
     </DropdownMenu>
   );
 }

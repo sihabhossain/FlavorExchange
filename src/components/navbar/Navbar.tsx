@@ -44,7 +44,7 @@ const Navbar: React.FC = () => {
             type="text"
             placeholder="Search..."
             className="pl-10 py-2 bg-gray-100 rounded-full border border-gray-300 focus:outline-none focus:border-green-500"
-            onChange={handleSearchChange} // Update search context on input change
+            onChange={handleSearchChange}
           />
         </div>
       </div>

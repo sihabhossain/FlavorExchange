@@ -1,5 +1,11 @@
-import { CreateUser, GetAllUsers, GetSingleUser } from "@/services/users";
-import { IUser, UserData } from "@/types";
+import {
+  CreateUser,
+  FollowUser,
+  GetAllUsers,
+  GetSingleUser,
+  UnfollowUser,
+} from "@/services/users";
+import { FollowUserRequestBody, IUser, UserData } from "@/types";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 
@@ -30,6 +36,36 @@ export const useCreateUser = () => {
 
     onSuccess: () => {
       toast.success("User created successfully");
+    },
+    onError: (error) => {
+      console.log(error);
+      toast.error(error.message);
+    },
+  });
+};
+
+export const useFollowUser = (_id: string) => {
+  return useMutation<any, Error, FollowUserRequestBody>({
+    mutationKey: ["FOLLOW_USER"],
+    mutationFn: async (postData) => await FollowUser(_id, postData),
+
+    onSuccess: () => {
+      toast.success("User followed successfully");
+    },
+    onError: (error) => {
+      console.log(error);
+      toast.error(error.message);
+    },
+  });
+};
+
+export const useUnfollowUser = (_id: string) => {
+  return useMutation<any, Error, FollowUserRequestBody>({
+    mutationKey: ["UNFOLLOW_USER"],
+    mutationFn: async (postData) => await UnfollowUser(_id, postData),
+
+    onSuccess: () => {
+      toast.success("User followed successfully");
     },
     onError: (error) => {
       console.log(error);

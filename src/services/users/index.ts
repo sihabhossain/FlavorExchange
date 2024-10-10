@@ -1,7 +1,7 @@
 "use server";
 
 import axiosInstance from "@/lib/AxiosInstance";
-import { IUser, UserData } from "@/types";
+import { FollowUserRequestBody, UserData } from "@/types";
 
 export const GetAllUsers = async () => {
   try {
@@ -28,6 +28,48 @@ export const CreateUser = async (postData: UserData) => {
         "Content-Type": "application/json",
       },
     });
+
+    return data;
+  } catch (err: any) {
+    throw new Error(err);
+  }
+};
+
+export const FollowUser = async (
+  _id: string,
+  postData: FollowUserRequestBody
+) => {
+  try {
+    const { data } = await axiosInstance.post(
+      `/users/follow/${_id}`,
+      postData,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    return data;
+  } catch (err: any) {
+    throw new Error(err);
+  }
+};
+
+export const UnfollowUser = async (
+  _id: string,
+  postData: FollowUserRequestBody
+) => {
+  try {
+    const { data } = await axiosInstance.post(
+      `/users/unfollow/${_id}`,
+      postData,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
     return data;
   } catch (err: any) {
