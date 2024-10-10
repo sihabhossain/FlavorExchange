@@ -1,44 +1,57 @@
 "use client";
 
 import React, { useState } from "react";
-import { Menu, X } from "lucide-react";
-import { UserDropdown } from "./DropDown";
-import Link from "next/link";
+import { Menu, Search, X } from "lucide-react";
+import { Input } from "../ui/input";
+import { useSearch } from "@/contexts/search.provider";
+import { UserDropdown } from "./DropDown"; // Import UserDropdown
 import MobileSidebar from "./MobileSidebar";
-import SearchInput from "./Search";
 
-const Navbar = () => {
+const Navbar: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const { setSearchInput } = useSearch(); // Access search input from context
 
   // Function to toggle sidebar visibility
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchInput(e.target.value); // Update the search input in context
+  };
+
   return (
-    <nav className="sticky top-0 z-50 flex items-center px-4 md:px-10 lg:px-20 justify-between p-4 bg-white shadow-md">
-      {/* Left: Logo and Hamburger */}
+    <nav className="sticky top-0 z-50 flex items-center lg:px-20 justify-between p-4 bg-white shadow-md">
       <div className="flex items-center">
-        {/* Hamburger Icon for Mobile */}
+        {/* Toggle for sidebar */}
         <button onClick={toggleSidebar} className="md:hidden p-2">
           {isSidebarOpen ? (
-            <X className="w-5 h-5" /> // Smaller X icon
+            <X className="w-5 h-5" />
           ) : (
-            <Menu className="w-10 h-6" /> // Smaller Menu icon
+            <Menu className="w-10 h-6" />
           )}
         </button>
 
-        <Link href={"/"} className="text-2xl font-bold text-gray-800">
-          FlavorXchange
-        </Link>
+        {/* Logo */}
+        <h1 className="text-2xl font-bold hidden md:block">FlavorXchange</h1>
       </div>
 
-      {/* Center: Search Input */}
-      <SearchInput />
+      {/* Centered Search Input */}
+      <div className="flex-grow mx-4 flex justify-center">
+        <div className="relative w-full max-w-[300px] md:max-w-[800px] mr-28">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+          <Input
+            type="text"
+            placeholder="Search..."
+            className="pl-10 py-2 bg-gray-100 rounded-full border border-gray-300 focus:outline-none focus:border-green-500"
+            onChange={handleSearchChange} // Update search context on input change
+          />
+        </div>
+      </div>
 
-      {/* Right: User Dropdown */}
+      {/* User Dropdown */}
       <div className="items-center">
-        <UserDropdown />
+        <UserDropdown /> {/* Existing UserDropdown component */}
       </div>
 
       {/* Sidebar Component */}
