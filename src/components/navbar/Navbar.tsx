@@ -38,7 +38,7 @@ const Navbar: React.FC = () => {
 
       {/* Centered Search Input */}
       <div className="flex-grow mx-4 flex justify-center">
-        <div className="relative w-full max-w-[300px] md:max-w-[800px] mr-28">
+        <div className="relative w-full max-w-[300px] md:max-w-[800px] mr-32">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
           <Input
             type="text"

@@ -7,7 +7,7 @@ function MainLayout({ children }: { children: ReactNode }) {
   return (
     <div className="flex">
       {/* Hide the sidebar on small screens */}
-      <div className="hidden lg:block">
+      <div className="hidden xl:block">
         <Sidebar />
       </div>
       <div className="flex flex-col flex-grow">
@@ -18,7 +18,7 @@ function MainLayout({ children }: { children: ReactNode }) {
         </main>
       </div>
       {/* User list section on the right side */}
-      <div className="hidden lg:block">
+      <div className="hidden xl:block">
         <UserList />
       </div>
     </div>
