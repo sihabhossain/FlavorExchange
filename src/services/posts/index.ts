@@ -1,7 +1,7 @@
 "use server";
 
 import axiosInstance from "@/lib/AxiosInstance";
-import { IRecipe, TUpdateRecipe } from "@/types";
+import { IRating, IRecipe, TUpdateRecipe } from "@/types";
 
 export const CreateRecipePost = async (postData: IRecipe) => {
   try {
@@ -57,6 +57,20 @@ export const GetAllPosts = async () => {
 export const GetSinglePost = async (id: string) => {
   try {
     const { data } = await axiosInstance.get(`/recipe/${id}`);
+    return data;
+  } catch (err: any) {
+    throw new Error(err);
+  }
+};
+
+export const RateRecipe = async (_id: string, postData: IRating) => {
+  try {
+    const { data } = await axiosInstance.post(`/recipe/${_id}/rate`, postData, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
     return data;
   } catch (err: any) {
     throw new Error(err);

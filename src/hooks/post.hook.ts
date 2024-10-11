@@ -3,9 +3,10 @@ import {
   DeleteRecipe,
   GetAllPosts,
   GetSinglePost,
+  RateRecipe,
   UpdateRecipe,
 } from "@/services/posts";
-import { IRecipe, TUpdateRecipe } from "@/types";
+import { IRating, IRecipe, TUpdateRecipe } from "@/types";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 
@@ -84,5 +85,21 @@ export const useGetSinglePost = (id: string) => {
     queryFn: () => GetSinglePost(id),
     refetchInterval: 1000,
     refetchIntervalInBackground: true,
+  });
+};
+
+export const useRateRecipe = () => {
+  return useMutation<void, Error, { _id: string; postData: IRating }>({
+    mutationKey: ["CREATE_RATING"],
+    mutationFn: async ({ _id, postData }) => {
+      await RateRecipe(_id, postData);
+    },
+    onSuccess: () => {
+      toast.success("Recipe rated successfully");
+    },
+    onError: (error) => {
+      console.error(error);
+      toast.error(error.message);
+    },
   });
 };

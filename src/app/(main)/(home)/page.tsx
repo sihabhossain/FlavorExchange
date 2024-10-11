@@ -22,17 +22,20 @@ const Home: React.FC = () => {
   const { searchInput } = useSearch();
   const [sortOrder, setSortOrder] = useState<string>("upvotes");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
-  const [page, setPage] = useState<number>(1);
+  const [loadingMore, setLoadingMore] = useState<boolean>(false); // New loading state
   const loaderRef = useRef<HTMLDivElement>(null);
 
   // Load more posts (repeat posts after data is exhausted)
   const loadMorePosts = useCallback(() => {
-    if (data?.data) {
-      const nextPagePosts = [...posts, ...data.data]; // Append the same data again
-      setPosts(nextPagePosts);
-      setPage((prevPage) => prevPage + 1);
+    if (data?.data && !loadingMore) {
+      setLoadingMore(true); // Start loading
+      setTimeout(() => {
+        const nextPagePosts = [...posts, ...data.data]; // Append the same data again
+        setPosts(nextPagePosts);
+        setLoadingMore(false); // End loading after posts are appended
+      }, 1000); // Simulate loading time (adjust if needed)
     }
-  }, [data, posts]);
+  }, [data, posts, loadingMore]);
 
   // Set posts once data is fetched initially
   useEffect(() => {
@@ -61,7 +64,7 @@ const Home: React.FC = () => {
     const observer = new IntersectionObserver(
       (entries) => {
         const entry = entries[0];
-        if (entry.isIntersecting && !isLoading) {
+        if (entry.isIntersecting && !loadingMore && !isLoading) {
           loadMorePosts();
         }
       },
@@ -78,7 +81,7 @@ const Home: React.FC = () => {
         observer.unobserve(currentLoaderRef);
       }
     };
-  }, [loadMorePosts, isLoading]);
+  }, [loadMorePosts, isLoading, loadingMore]);
 
   // Filter posts based on search input and selected category
   const filteredPosts = posts.filter((post) => {
@@ -138,11 +141,14 @@ const Home: React.FC = () => {
         <p className="text-center py-4">No recipes found.</p>
       )}
 
-      {/* Loader for infinite scrolling */}
+      {/* Loader for the initial data fetching */}
       {isLoading && <Loader />}
 
-      {/* Intersection observer target for infinite scrolling */}
-      <div ref={loaderRef} className="h-10"></div>
+      {/* Loader for infinite scrolling */}
+      <div ref={loaderRef} className="h-10 flex justify-center items-center">
+        {loadingMore && <Loader />}
+        {/* Loader for when more posts are loading */}
+      </div>
     </div>
   );
 };

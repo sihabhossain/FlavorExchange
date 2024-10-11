@@ -7,11 +7,12 @@ import {
   ThumbsUp,
   ThumbsDown,
   Loader2,
+  Star,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import { PostCardProps } from "@/types";
+import { IRating, PostCardProps } from "@/types";
 import { toast } from "sonner";
 import { useUser } from "@/contexts/user.provider";
 import { UseDownVotePost, useUpvotePost } from "@/hooks/voting.hook";
@@ -22,9 +23,11 @@ import {
 } from "@/hooks/comment.hook";
 import DOMPurify from "dompurify";
 import { useGetSingleUser } from "@/hooks/user.hook";
+import { useRateRecipe } from "@/hooks/post.hook";
 
 const PostCard: React.FC<{ post: PostCardProps }> = ({ post }) => {
   const [showComments, setShowComments] = useState(false);
+  const [rating, setRating] = useState<number | null>(null); // State for user rating
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState(post.comments);
   const [upvotes, setUpvotes] = useState(post.upvotes);
@@ -55,6 +58,20 @@ const PostCard: React.FC<{ post: PostCardProps }> = ({ post }) => {
   const { mutate: editCommentMutate, isPending: commentLoading } =
     useEditComment();
   const { mutate: deleteCommentMutate } = useDeleteComment();
+  const { mutate: rateRecipeMutate } = useRateRecipe(); // Mutation for rating recipes
+
+  const handleRateRecipe = (ratingValue: number) => {
+    if (user) {
+      const ratingData: IRating = {
+        userId: user._id,
+        rating: ratingValue.toString(), // Convert the number to a string
+      };
+      rateRecipeMutate({ _id: post._id, postData: ratingData });
+      setRating(ratingValue); // Update local rating state
+    } else {
+      toast.error("You must be logged in to rate.");
+    }
+  };
 
   const handleCommentSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -187,6 +204,26 @@ const PostCard: React.FC<{ post: PostCardProps }> = ({ post }) => {
           </p>
         </div>
       )}
+
+      {/* Rating Section */}
+      <div className="px-6 py-4">
+        <h3 className="text-md font-semibold">
+          Average Rating: {post?.averageRating} ⭐
+        </h3>{" "}
+        {/* Display average rating */}
+        <h3 className="text-md font-semibold">Rate this Recipe:</h3>
+        <div className="flex space-x-1">
+          {[1, 2, 3, 4, 5].map((star) => (
+            <Star
+              key={star}
+              className={`w-6 h-6 cursor-pointer ${
+                rating! >= star ? "text-yellow-500" : "text-gray-300"
+              }`}
+              onClick={() => handleRateRecipe(star)} // Call rating function on click
+            />
+          ))}
+        </div>
+      </div>
 
       {/* Footer */}
       <div className="px-6 py-4">

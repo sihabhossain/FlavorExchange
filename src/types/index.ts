@@ -102,3 +102,8 @@ export type ProfileFormData = {
 export interface FollowUserRequestBody {
   followingId: string;
 }
+
+export interface IRating {
+  userId: string;
+  rating: string;
+}
