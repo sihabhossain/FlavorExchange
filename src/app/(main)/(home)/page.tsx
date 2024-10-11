@@ -3,9 +3,9 @@
 import PostCard from "@/components/card/PostCard";
 import Loader from "@/components/loader/Loader";
 import { useSearch } from "@/contexts/search.provider";
-import { useGetAllPosts } from "@/hooks/post.hook"; // Adjust this to fetch recipes
-import { PostCardProps } from "@/types"; // Ensure PostCardProps includes upvotes
-import React, { useEffect, useState } from "react";
+import { useGetAllPosts } from "@/hooks/post.hook";
+import { PostCardProps } from "@/types";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import {
   Select,
   SelectContent,
@@ -14,18 +14,29 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"; // Import your Select components
+} from "@/components/ui/select";
 
 const Home: React.FC = () => {
   const { data, isLoading, isError } = useGetAllPosts();
   const [posts, setPosts] = useState<PostCardProps[]>([]);
   const { searchInput } = useSearch();
-  const [sortOrder, setSortOrder] = useState<string>(""); // Set default sort to an empty string
-  const [selectedCategory, setSelectedCategory] = useState<string>("all"); // State for selected category
+  const [sortOrder, setSortOrder] = useState<string>("upvotes");
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [page, setPage] = useState<number>(1);
+  const loaderRef = useRef<HTMLDivElement>(null);
 
-  // Set posts once data is fetched
+  // Load more posts (repeat posts after data is exhausted)
+  const loadMorePosts = useCallback(() => {
+    if (data?.data) {
+      const nextPagePosts = [...posts, ...data.data]; // Append the same data again
+      setPosts(nextPagePosts);
+      setPage((prevPage) => prevPage + 1);
+    }
+  }, [data, posts]);
+
+  // Set posts once data is fetched initially
   useEffect(() => {
-    if (data) {
+    if (data?.data) {
       const sortedPosts = data.data.sort(
         (a: PostCardProps, b: PostCardProps) => b.upvotes - a.upvotes
       );
@@ -33,7 +44,7 @@ const Home: React.FC = () => {
     }
   }, [data]);
 
-  // Sorting function
+  // Handle sorting posts
   const handleSortChange = (order: string) => {
     setSortOrder(order);
     const sortedPosts = [...posts];
@@ -45,13 +56,37 @@ const Home: React.FC = () => {
     setPosts(sortedPosts);
   };
 
+  // Infinite scroll logic using IntersectionObserver
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        if (entry.isIntersecting && !isLoading) {
+          loadMorePosts();
+        }
+      },
+      { threshold: 1 }
+    );
+
+    const currentLoaderRef = loaderRef.current;
+    if (currentLoaderRef) {
+      observer.observe(currentLoaderRef);
+    }
+
+    return () => {
+      if (currentLoaderRef) {
+        observer.unobserve(currentLoaderRef);
+      }
+    };
+  }, [loadMorePosts, isLoading]);
+
   // Filter posts based on search input and selected category
   const filteredPosts = posts.filter((post) => {
     const matchesSearch = post.title
       .toLowerCase()
       .includes(searchInput.toLowerCase());
     const matchesCategory =
-      selectedCategory === "all" || post.category === selectedCategory; // Adjust the property based on your data structure
+      selectedCategory === "all" || post.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
@@ -90,20 +125,24 @@ const Home: React.FC = () => {
                 <SelectItem value="all">All</SelectItem>
                 <SelectItem value="veg">Vegetarian</SelectItem>
                 <SelectItem value="non-veg">Non-Vegetarian</SelectItem>
-                {/* Add more categories as needed */}
               </SelectGroup>
             </SelectContent>
           </Select>
         </div>
       </div>
 
+      {/* Display filtered posts */}
       {filteredPosts.length > 0 ? (
         filteredPosts.map((post, index) => <PostCard key={index} post={post} />)
       ) : (
         <p className="text-center py-4">No recipes found.</p>
       )}
 
+      {/* Loader for infinite scrolling */}
       {isLoading && <Loader />}
+
+      {/* Intersection observer target for infinite scrolling */}
+      <div ref={loaderRef} className="h-10"></div>
     </div>
   );
 };
