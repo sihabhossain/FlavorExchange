@@ -17,6 +17,15 @@ import "react-quill/dist/quill.snow.css";
 import { useCreateRecipePost } from "@/hooks/post.hook";
 import { useUser } from "@/contexts/user.provider";
 import { Loader2 } from "lucide-react"; // Import a loading icon
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
@@ -60,7 +69,7 @@ export function CreateRecipeModal() {
       instructions,
       image,
       userId: user?._id,
-      category,
+      category, // Added category in the request
     };
 
     createRecipe(recipeData);
@@ -97,22 +106,24 @@ export function CreateRecipeModal() {
             />
           </div>
 
-          {/* Category Selection */}
-          <div className="grid gap-2">
+          {/* Category Selector */}
+          <div className="grid gap-2 mt-4">
             <Label htmlFor="category" className="text-lg font-medium">
               Category
             </Label>
-            <select
-              id="category"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              className="p-3 text-lg border rounded-md"
-            >
-              <option value="veg">Veg</option>
-              <option value="non-veg">Non-Veg</option>
-            </select>
+            <Select onValueChange={setCategory} value={category}>
+              <SelectTrigger className="border outline-green-500 border-gray-300 rounded p-2">
+                <SelectValue placeholder="Select category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Category Options</SelectLabel>
+                  <SelectItem value="veg">Vegetarian</SelectItem>
+                  <SelectItem value="non-veg">Non-Vegetarian</SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
           </div>
-
           {/* Ingredients */}
           <div>
             <h3 className="text-lg font-semibold mb-2">Ingredients</h3>

@@ -17,6 +17,15 @@ import "react-quill/dist/quill.snow.css";
 import { TRecipe } from "@/types";
 import { useUpdateRecipe } from "@/hooks/post.hook";
 import { useUser } from "@/contexts/user.provider";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"; // Importing Select components
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
@@ -25,6 +34,7 @@ export function UpdateRecipeModal({ recipe }: { recipe: TRecipe }) {
   const [title, setTitle] = useState(recipe.title || "");
   const [instructions, setInstructions] = useState(recipe.instructions || "");
   const [image, setImage] = useState(recipe.image || "");
+  const [category, setCategory] = useState(recipe.category || "veg"); // New state for category
 
   const { mutate: UpdateRecipe } = useUpdateRecipe(recipe?._id);
   const { user } = useUser();
@@ -35,6 +45,7 @@ export function UpdateRecipeModal({ recipe }: { recipe: TRecipe }) {
       setTitle(recipe.title);
       setInstructions(recipe.instructions);
       setImage(recipe.image);
+      setCategory(recipe.category || "veg"); // Set category if available
     }
   }, [recipe]);
 
@@ -44,6 +55,7 @@ export function UpdateRecipeModal({ recipe }: { recipe: TRecipe }) {
       title,
       instructions,
       image,
+      category, // Add category to the updated data
       userId: user?._id,
     };
 
@@ -110,6 +122,25 @@ export function UpdateRecipeModal({ recipe }: { recipe: TRecipe }) {
               placeholder="https://example.com/image.jpg"
               className="p-3 text-lg border rounded-md"
             />
+          </div>
+
+          {/* Category Selector */}
+          <div className="grid gap-2 mt-4">
+            <Label htmlFor="category" className="text-lg font-medium">
+              Category
+            </Label>
+            <Select onValueChange={setCategory} value={category}>
+              <SelectTrigger className="border outline-green-500 border-gray-300 rounded p-2">
+                <SelectValue placeholder="Select category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Category Options</SelectLabel>
+                  <SelectItem value="veg">Vegetarian</SelectItem>
+                  <SelectItem value="non-veg">Non-Vegetarian</SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
           </div>
         </div>
         <DialogFooter>
