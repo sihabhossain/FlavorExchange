@@ -27,6 +27,7 @@ export function CreateRecipeModal() {
   const [image, setImage] = useState("");
   const [newIngredient, setNewIngredient] = useState("");
   const [isOpen, setIsOpen] = useState(false); // Modal open state
+  const [category, setCategory] = useState("veg"); // New state for category
 
   // retrieve user _id
   const { user } = useUser();
@@ -59,6 +60,7 @@ export function CreateRecipeModal() {
       instructions,
       image,
       userId: user?._id,
+      category,
     };
 
     createRecipe(recipeData);
@@ -93,6 +95,22 @@ export function CreateRecipeModal() {
               placeholder="Recipe Title"
               className="p-3 text-lg border rounded-md"
             />
+          </div>
+
+          {/* Category Selection */}
+          <div className="grid gap-2">
+            <Label htmlFor="category" className="text-lg font-medium">
+              Category
+            </Label>
+            <select
+              id="category"
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              className="p-3 text-lg border rounded-md"
+            >
+              <option value="veg">Veg</option>
+              <option value="non-veg">Non-Veg</option>
+            </select>
           </div>
 
           {/* Ingredients */}

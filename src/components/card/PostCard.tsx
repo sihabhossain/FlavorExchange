@@ -127,7 +127,7 @@ const PostCard: React.FC<{ post: PostCardProps }> = ({ post }) => {
   };
 
   return (
-    <div className="max-w-xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden mt-4">
+    <div className="max-w-xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden mt-4 hover:scale-105 transition-transform duration-300 ease-in-out">
       {/* Header */}
       <div className="flex items-center px-6 py-4">
         <img
@@ -141,9 +141,6 @@ const PostCard: React.FC<{ post: PostCardProps }> = ({ post }) => {
           </h2>
           <p className="text-sm text-gray-500">{post.title}</p>
         </div>
-        <button className="ml-auto">
-          <MoreHorizontal className="w-6 h-6 text-gray-500" />
-        </button>
       </div>
 
       {/* Show a preview of instructions */}

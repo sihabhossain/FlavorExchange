@@ -137,9 +137,6 @@ const PostDetails: React.FC = () => {
           </h2>
           <p className="text-sm text-gray-500">{post?.title}</p>
         </div>
-        <button className="ml-auto">
-          <MoreHorizontal className="w-6 h-6 text-gray-500" />
-        </button>
       </div>
 
       {/* Show a preview of instructions */}
@@ -148,7 +145,7 @@ const PostDetails: React.FC = () => {
         <div
           className="text-sm text-gray-700"
           dangerouslySetInnerHTML={{
-            __html: DOMPurify.sanitize(post?.instructions.slice(0, 50) + "..."),
+            __html: DOMPurify.sanitize(post?.instructions),
           }}
         />
       </div>

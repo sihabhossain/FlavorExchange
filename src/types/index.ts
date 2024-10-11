@@ -36,6 +36,7 @@ export interface IUser {
 
 // Define the PostCardProps type
 export interface PostCardProps {
+  category: string;
   _id: string;
   title: string;
   ingredients: string[];
@@ -75,6 +76,7 @@ export type TRecipe = {
   upvotes: number;
   downvotes: number;
   averageRating: number | null; // Assuming it can be null
+  category: string;
   ratings: number[]; // Assuming ratings are stored as an array of numbers
   comments: RecipeComment[];
   createdAt: string; // or Date if you prefer to work with Date objects
