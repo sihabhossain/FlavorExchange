@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   MoreHorizontal,
   MessageCircle,
   ThumbsUp,
   ThumbsDown,
+  Loader2,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Button } from "../ui/button";
@@ -39,10 +40,20 @@ const PostCard: React.FC<{ post: PostCardProps }> = ({ post }) => {
   const { data } = useGetSingleUser(userData?._id || "");
   const user = data?.data;
 
+  useEffect(() => {
+    if (post) {
+      setComments(post.comments || []);
+      setUpvotes(post.upvotes || 0);
+      setDownvotes(post.downvotes || 0);
+    }
+  }, [post]);
+
   const { mutate: upvoteMutate } = useUpvotePost(post._id);
   const { mutate: downvoteMutate } = UseDownVotePost(post._id);
-  const { mutate: postCommentMutate } = usePostComment();
-  const { mutate: editCommentMutate } = useEditComment();
+  const { mutate: postCommentMutate, isPending: postCommentLoading } =
+    usePostComment();
+  const { mutate: editCommentMutate, isPending: commentLoading } =
+    useEditComment();
   const { mutate: deleteCommentMutate } = useDeleteComment();
 
   const handleCommentSubmit = (e: React.FormEvent) => {
@@ -74,6 +85,8 @@ const PostCard: React.FC<{ post: PostCardProps }> = ({ post }) => {
         commentId: id, // Pass comment ID
         postData: updatedComment, // Ensure correct data structure
       });
+
+      setEditCommentId("");
     } else {
       toast.error("Comment cannot be empty.");
     }
@@ -230,7 +243,15 @@ const PostCard: React.FC<{ post: PostCardProps }> = ({ post }) => {
                 type="submit"
                 className="ml-2 text-white rounded-full px-4 py-2"
               >
-                Send
+                {postCommentLoading ? (
+                  <>
+                    <Loader2 className="animate-spin mr-2" />{" "}
+                    {/* Loading spinner */}
+                    Posting...
+                  </>
+                ) : (
+                  "Post"
+                )}
               </Button>
             </form>
           </div>
@@ -307,7 +328,15 @@ const PostCard: React.FC<{ post: PostCardProps }> = ({ post }) => {
               type="submit"
               className="ml-2 text-white rounded-full px-4 py-2"
             >
-              Update
+              {commentLoading ? (
+                <>
+                  <Loader2 className="animate-spin mr-2" />{" "}
+                  {/* Loading spinner */}
+                  Updating...
+                </>
+              ) : (
+                "Update"
+              )}
             </Button>
           </form>
         </div>

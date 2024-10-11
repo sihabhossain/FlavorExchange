@@ -6,6 +6,7 @@ import { Input } from "../ui/input";
 import { useSearch } from "@/contexts/search.provider";
 import { UserDropdown } from "./DropDown"; // Import UserDropdown
 import MobileSidebar from "./MobileSidebar";
+import Link from "next/link";
 
 const Navbar: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -33,7 +34,9 @@ const Navbar: React.FC = () => {
         </button>
 
         {/* Logo */}
-        <h1 className="text-2xl font-bold hidden md:block">FlavorXchange</h1>
+        <Link href={"/"}>
+          <h1 className="text-2xl font-bold hidden md:block">FlavorXchange</h1>
+        </Link>
       </div>
 
       {/* Centered Search Input */}
