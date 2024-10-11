@@ -25,9 +25,8 @@ const AuthPage: React.FC = () => {
   const { setIsLoading: userLoading } = useUser();
 
   // mutations
-  const { mutate: registerUser, isPending: registerPending } =
-    useUserRegistration();
-  const { mutate: loginUser, isPending: loginPending } = useUserLogin();
+  const { mutate: registerUser } = useUserRegistration();
+  const { mutate: loginUser } = useUserLogin();
 
   const toggleForm = () => setIsLogin(!isLogin);
 

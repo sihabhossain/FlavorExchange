@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import {
   CreateUser,
   FollowUser,
@@ -5,7 +7,7 @@ import {
   GetSingleUser,
   UnfollowUser,
 } from "@/services/users";
-import { FollowUserRequestBody, IUser, UserData } from "@/types";
+import { FollowUserRequestBody, UserData } from "@/types";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 

@@ -1,24 +1,15 @@
-import { LogOut, Settings, User } from "lucide-react";
-
 import {
   DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import Link from "next/link";
+
 import { useUser } from "@/contexts/user.provider";
-import { useRouter } from "next/navigation";
-import { logout } from "@/services/auth";
+
 import { useGetSingleUser } from "@/hooks/user.hook";
 
 export function UserDropdown() {
-  const { user: userData, setIsLoading: userLoading } = useUser();
+  const { user: userData } = useUser();
   const { data } = useGetSingleUser(userData?._id || "");
 
   const user = data?.data;

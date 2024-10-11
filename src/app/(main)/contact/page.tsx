@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { motion } from "framer-motion";
 import { PhoneIcon, MapPinIcon, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button"; // Adjust the import path as needed

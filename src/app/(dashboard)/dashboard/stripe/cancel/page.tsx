@@ -18,7 +18,7 @@ const page = () => {
           <XCircle className="h-24 w-24 text-red-500 mb-4" />
           <h1 className="text-3xl font-bold mb-2">Payment Canceled</h1>
           <p className="text-lg text-gray-300 mb-4">
-            We're sorry to hear that your payment was canceled.
+            We are sorry to hear that your payment was canceled.
           </p>
           <p className="text-gray-400 mb-4">
             If this was a mistake, please try again or contact support if you

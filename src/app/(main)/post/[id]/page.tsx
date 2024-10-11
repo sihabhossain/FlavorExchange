@@ -8,7 +8,7 @@ import {
   ThumbsDown,
   Loader2,
 } from "lucide-react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { PostCardProps } from "@/types";
 import { toast } from "sonner";
 import { useUser } from "@/contexts/user.provider";
