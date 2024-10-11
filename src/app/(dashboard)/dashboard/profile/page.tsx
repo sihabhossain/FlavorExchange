@@ -78,6 +78,8 @@ const ProfilePage = () => {
 
     const session = await response.json();
 
+    console.log(session);
+
     if (!session?.data.url) {
       toast.error("Failed to create a checkout session.");
       setLoading(false); // Reset loading state
