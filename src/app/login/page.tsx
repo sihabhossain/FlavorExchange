@@ -11,11 +11,11 @@ import { useUser } from "@/contexts/user.provider";
 
 const AuthPage: React.FC = () => {
   const [isLogin, setIsLogin] = useState(true);
-  const [loading, setLoading] = useState(false); // Loading state
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
-    email: "",
-    password: "",
+    email: "user@gmail.com",
+    password: "123456",
     mobileNumber: "",
     profilePhoto: "",
   });
